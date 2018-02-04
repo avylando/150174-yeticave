@@ -53,6 +53,16 @@ $lot6 = [
 ];
 
 $lots = [$lot1, $lot2, $lot3, $lot4, $lot5, $lot6];
+
+function format_price($price) {
+    $int_price = ceil($price);
+    if ($int_price >= 1000) {
+        $int_price = number_format($int_price, 0, '.', ' ');
+    }
+
+    $formatted_price = $int_price . ' ';
+    return $formatted_price;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -141,7 +151,7 @@ $lots = [$lot1, $lot2, $lot3, $lot4, $lot5, $lot6];
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?=$value['price']?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?=format_price($value['price'])?><b class="rub">р</b></span>
                         </div>
                         <div class="lot__timer timer">
 
