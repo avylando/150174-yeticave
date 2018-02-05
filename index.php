@@ -65,6 +65,7 @@ function format_price($price) {
     $formatted_price = $int_price . ' ';
     return $formatted_price;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
