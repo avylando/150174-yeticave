@@ -62,7 +62,7 @@ function format_price($price) {
         $int_price = number_format($int_price, 0, '.', ' ');
     }
 
-    $formatted_price = $int_price . ' ';
+    $formatted_price = $int_price . ' &#8381;';
     return $formatted_price;
 }
 ?>
