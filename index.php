@@ -7,7 +7,7 @@ $categories = ['Доски и лыжи', 'Крепления', 'Ботинки',
 
 
 $lots = [
-    1 => [
+    0 => [
         'title' => '2014 Rossignol District Snowboard',
         'category' => $categories[0],
         'price' => 10999,
@@ -15,7 +15,7 @@ $lots = [
         'alt' => 'Сноуборд'
     ],
 
-    2 => [
+    1 => [
         'title' => 'DC Ply Mens 2016/2017 Snowboard',
         'category' => $categories[0],
         'price' => 	159999,
@@ -23,7 +23,7 @@ $lots = [
         'alt' => 'Сноуборд'
     ],
 
-    3 => [
+    2 => [
         'title' => 'Крепления Union Contact Pro 2015 года размер L/XL',
         'category' => $categories[1],
         'price' => 	8000,
@@ -31,7 +31,7 @@ $lots = [
         'alt' => 'Крепления'
     ],
 
-    4 => [
+    3 => [
         'title' => 'Ботинки для сноуборда DC Mutiny Charocal',
         'category' => $categories[2],
         'price' => 	10999,
@@ -39,7 +39,7 @@ $lots = [
         'alt' => 'Ботинки для сноуборда'
     ],
 
-    5 => [
+    4 => [
         'title' => 'Куртка для сноуборда DC Mutiny Charocal',
         'category' => $categories[3],
         'price' => 	7500,
@@ -47,7 +47,7 @@ $lots = [
         'alt' => 'Куртка для сноуборда'
     ],
 
-    6 => [
+    5 => [
         'title' => 'Маска Oakley Canopy',
         'category' => $categories[5],
         'price' => 	5400,
@@ -55,6 +55,17 @@ $lots = [
         'alt' => 'Маска для сноуборда'
     ]
 ];
+
+function format_price($price) {
+    $int_price = ceil($price);
+    if ($int_price >= 1000) {
+        $int_price = number_format($int_price, 0, '.', ' ');
+    }
+
+    $formatted_price = $int_price . ' &#8381;';
+    return $formatted_price;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -143,7 +154,7 @@ $lots = [
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?=$lot['price']?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?=format_price($lot['price'])?></span>
                         </div>
                         <div class="lot__timer timer">
 
