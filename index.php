@@ -2,9 +2,9 @@
 require_once 'functions.php';
 
 $is_auth = (bool) rand(0, 1);
-
 $user_name = 'Константин';
 $user_avatar = 'img/user.jpg';
+
 $categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
 
 
@@ -58,16 +58,18 @@ $lots = [
     ]
 ];
 
-$page_content = include_template('templates/index.php', [
+$page_content = render_template('templates/index.php', [
     'categories' => $categories,
     'lots' => $lots
 ]);
 
-$layout_content = include_template('templates/layout.php', [
+$layout_content = render_template('templates/layout.php', [
     'title' => 'Главная страница',
-    'is_auth' => $is_auth,
-    'user_name' => $user_name,
-    'user_avatar' => $user_avatar,
+    'authorization' => [
+        'is_auth' => $is_auth,
+        'user_name' => $user_name,
+        'user_avatar' => $user_avatar
+        ],
     'categories' => $categories,
     'content' => $page_content
 ]);

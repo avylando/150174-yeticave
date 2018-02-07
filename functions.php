@@ -1,14 +1,14 @@
 <?php
 
-function include_template ($template_src, $data) {
+function render_template ($template_src, $data) {
     if (file_exists($template_src)) {
-        foreach ($data as $var_name => $value) {
-            $$var_name = $value;
-        }
+        // foreach ($data as $var_name => $value) {
+        //     $$var_name = $value;
+        // }
+        extract($data);
         ob_start();
         require_once $template_src;
-        $template = ob_get_clean();
-        return $template;
+        return ob_get_clean();
     }
 
     return '';
