@@ -41,7 +41,7 @@
                         <span class="lot__cost"><?=format_price(strip_tags($lot['price']))?><b class="rub">р</b></span>
                     </div>
                     <div class="lot__timer timer">
-
+                        <?=$time_left?>
                     </div>
                 </div>
             </div>

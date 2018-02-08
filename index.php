@@ -58,9 +58,16 @@ $lots = [
     ]
 ];
 
+date_default_timezone_set('Europe/Moscow');
+$diff = strtotime('tomorrow') - time();
+$hours = floor($diff / 3600);
+$minutes = floor(($diff / 60) - ($hours * 60));
+$time_left = $hours . ':' . $minutes;
+
 $page_content = render_template('templates/index.php', [
     'categories' => $categories,
-    'lots' => $lots
+    'lots' => $lots,
+    'time_left' => $time_left
 ]);
 
 $layout_content = render_template('templates/layout.php', [
