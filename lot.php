@@ -15,7 +15,7 @@ if (isset($_GET['id'])) {
     }
 }
 
-if (!$lot) {
+if (empty($lot)) {
     http_response_code(404);
 }
 
