@@ -5,11 +5,10 @@ require_once 'data.php';
 
 $lot = null;
 
-if (isset($_GET['lot_id'])) {
-    $lot_id = $_GET['lot_id'];
+if (isset($_GET['id'])) {
 
     foreach ($lots as $id => $item) {
-        if ($id == $lot_id) {
+        if ($id == $_GET['id']) {
             $lot = $item;
             break;
         }

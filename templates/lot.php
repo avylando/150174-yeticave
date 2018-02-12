@@ -1,22 +1,13 @@
 <section class="lot-item container">
     <?php if(isset($lot)): ?>
-    <h2><?=strip_tags($lot['title']);?></h2>
+    <h2><?=htmlspecialchars($lot['title']);?></h2>
     <div class="lot-item__content">
         <div class="lot-item__left">
         <div class="lot-item__image">
             <img src="<?=$lot['photo'];?>" width="730" height="548" alt="<?=$lot['alt'];?>">
         </div>
         <p class="lot-item__category">Категория: <span><?=$lot['category'];?></span></p>
-        <p class="lot-item__description">Легкий маневренный сноуборд, готовый дать жару в любом парке, растопив
-            снег
-            мощным щелчкоми четкими дугами. Стекловолокно Bi-Ax, уложенное в двух направлениях, наделяет этот
-            снаряд
-            отличной гибкостью и отзывчивостью, а симметричная геометрия в сочетании с классическим прогибом
-            кэмбер
-            позволит уверенно держать высокие скорости. А если к концу катального дня сил совсем не останется,
-            просто
-            посмотрите на Вашу доску и улыбнитесь, крутая графика от Шона Кливера еще никого не оставляла
-            равнодушным.</p>
+        <p class="lot-item__description"><?=htmlspecialchars($lot['message']);?></p>
         </div>
         <div class="lot-item__right">
         <div class="lot-item__state">
@@ -24,7 +15,7 @@
             <div class="lot-item__cost-state">
             <div class="lot-item__rate">
                 <span class="lot-item__amount">Текущая цена</span>
-                <span class="lot-item__cost"><?=format_price(strip_tags($lot['price']))?><b class="rub">р</b></span>
+                <span class="lot-item__cost"><?=format_price(htmlspecialchars($lot['price']))?><b class="rub">р</b></span>
             </div>
             <div class="lot-item__min-cost">
                 Мин. ставка <span>12 000 р</span>
