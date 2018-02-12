@@ -25,4 +25,14 @@ function format_price($price) {
     return '';
 }
 
+function set_timer() {
+    date_default_timezone_set('Europe/Moscow');
+    $diff = strtotime('tomorrow') - time();
+    $hours = floor($diff / 3600);
+    $minutes = floor(($diff / 60) - ($hours * 60));
+    $time_left = $hours . ':' . $minutes;
+
+    return $time_left;
+}
+
 ?>
