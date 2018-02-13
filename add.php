@@ -32,12 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $tmp_name = $_FILES['photo']['tmp_name'];
         $path = 'img/' . $_FILES['photo']['name'];
 
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $file_type = finfo_file($finfo, $tmp_name);
+        $file_info = finfo_open(FILEINFO_MIME_TYPE);
+        $file_type = finfo_file($file_info, $tmp_name);
 
         if ($file_type !== "image/png" && $file_type !== "image/jpeg" && $file_type !== "image/gif") {
             $errors['photo'] = 'Загрузите картинку в поддерживаемом формате (PNG, JPG, GIF)';
-        } else {
+        }
+
+        if (empty($errors)) {
             move_uploaded_file($tmp_name, $path);
             $lot['photo'] = $path;
         }
