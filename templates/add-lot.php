@@ -1,23 +1,10 @@
 <nav class="nav">
     <ul class="nav__list container">
-        <li class="nav__item">
-            <a href="all-lots.html">Доски и лыжи</a>
+    <?php foreach ($categories as $number => $category) : ?>
+        <li class="nav__item <?php $number === 0 ? print("nav__item--current") : ""?>">
+            <a href="all-lots.html"><?=$category?></a>
         </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Крепления</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Ботинки</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Одежда</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Инструменты</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Разное</a>
-        </li>
+    <?php endforeach; ?>
     </ul>
 </nav>
 <?php $classname = count($errors) ? "form--invalid" : "";?>
@@ -36,12 +23,9 @@
             <label for="category">Категория</label>
             <select id="category" name="category">
                 <option>Выберите категорию</option>
-                <option>Доски и лыжи</option>
-                <option>Крепления</option>
-                <option>Ботинки</option>
-                <option>Одежда</option>
-                <option>Инструменты</option>
-                <option>Разное</option>
+                <?php foreach ($categories as $category): ?>
+                <option <?php $lot['category'] === $category ? print('selected') : '';?>><?=$category?></option>
+                <?php endforeach; ?>
             </select>
             <span class="form__error"><?=$errors['category'];?></span>
         </div>

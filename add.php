@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if (is_uploaded_file($_FILES['photo']['tmp_name'])) {
+    if (is_uploaded_file($_FILES['photo']['tmp_name']) && empty($errors)) {
         $tmp_name = $_FILES['photo']['tmp_name'];
         $path = 'img/' . $_FILES['photo']['name'];
 
@@ -37,9 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($file_type !== "image/png" && $file_type !== "image/jpeg" && $file_type !== "image/gif") {
             $errors['photo'] = 'Загрузите картинку в поддерживаемом формате (PNG, JPG, GIF)';
-        }
-
-        if (empty($errors)) {
+        } else {
             move_uploaded_file($tmp_name, $path);
             $lot['photo'] = $path;
         }
@@ -47,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (count($errors)) {
         $page_content = render_template('templates/add-lot.php', [
+            'categories' => $categories,
             'lot' => $lot,
             'errors' => $errors
             ]);
@@ -56,7 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ]);
     }
 } else {
-    $page_content = render_template('templates/add-lot.php', []);
+    $page_content = render_template('templates/add-lot.php', [
+        'categories' => $categories,
+    ]);
 }
 
 $layout_content = render_template('templates/layout.php', [

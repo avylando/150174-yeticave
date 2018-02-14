@@ -4,14 +4,33 @@ require_once 'functions.php';
 require_once 'data.php';
 
 $lot = null;
+$viewed_ids = [];
 
 if (isset($_GET['id'])) {
-
     foreach ($lots as $id => $item) {
-        if ($id == $_GET['id']) {
+        if ($id ===  (int) $_GET['id']) {
             $lot = $item;
+            $current_id = $id;
+
             break;
         }
+    }
+
+    if (isset($_COOKIE['history'])) {
+        $view_history = $_COOKIE['history'];
+        $viewed_ids = json_decode($view_history);
+
+        if (!in_array($current_id, $viewed_ids)) {
+            array_push($viewed_ids, $current_id);
+        }
+
+        $updated_history = json_encode($viewed_ids);
+        setcookie('history', $updated_history, strtotime('+15 days'));
+
+    } else {
+        array_push($viewed_ids, $current_id);
+        $view_history = json_encode($viewed_ids);
+        setcookie('history', $view_history, strtotime('+15 days'));
     }
 }
 
