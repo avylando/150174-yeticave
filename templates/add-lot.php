@@ -1,13 +1,13 @@
 <nav class="nav">
     <ul class="nav__list container">
     <?php foreach ($categories as $number => $category) : ?>
-        <li class="nav__item <?php $number === 0 ? print("nav__item--current") : ""?>">
+        <li class="nav__item <?= ($number === 0) ? "nav__item--current" : ""?>">
             <a href="all-lots.html"><?=$category?></a>
         </li>
     <?php endforeach; ?>
     </ul>
 </nav>
-<?php $classname = count($errors) ? "form--invalid" : "";?>
+<?php $classname = !empty($errors) ? "form--invalid" : "";?>
 <form class="form form--add-lot container <?=$classname;?>" action="../add.php" method="post" enctype="multipart/form-data">
     <h2>Добавление лота</h2>
     <div class="form__container-two">
@@ -24,7 +24,7 @@
             <select id="category" name="category">
                 <option>Выберите категорию</option>
                 <?php foreach ($categories as $category): ?>
-                <option <?php $lot['category'] === $category ? print('selected') : '';?>><?=$category?></option>
+                <option <?= ($lot['category'] === $category) ? 'selected' : '';?>><?=$category?></option>
                 <?php endforeach; ?>
             </select>
             <span class="form__error"><?=$errors['category'];?></span>
@@ -79,5 +79,5 @@
         </div>
     </div>
     <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
-    <button type="submit" class="button">Добавить лот</button>
+    <button type="submit" name="add-lot" class="button">Добавить лот</button>
 </form>

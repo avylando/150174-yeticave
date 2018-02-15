@@ -3,7 +3,10 @@
 require_once 'functions.php';
 require_once 'data.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+$lot = null;
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add-lot'])) {
     $lot = $_POST;
 
     $required = ['title', 'category', 'message', 'price', 'step', 'date'];
@@ -16,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'date' => 'дату завершения торгов'
     ];
 
-    $errors = [];
+
 
     foreach ($required as $field) {
         if (empty($lot[$field])) {
@@ -48,15 +51,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'categories' => $categories,
             'lot' => $lot,
             'errors' => $errors
-            ]);
+        ]);
     } else {
         $page_content = render_template('templates/lot.php', [
             'lot' => $lot
-            ]);
+        ]);
     }
 } else {
     $page_content = render_template('templates/add-lot.php', [
         'categories' => $categories,
+        'lot' => $lot,
+        'errors' => $errors
     ]);
 }
 
