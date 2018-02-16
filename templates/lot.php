@@ -6,9 +6,7 @@
     <div class="lot-item__content">
         <div class="lot-item__left">
         <div class="lot-item__image">
-            <?php if (isset($lot['photo'])): ?>
             <img src="<?=strip_tags($lot['photo']);?>" width="730" height="548" alt="Изображение лота">
-            <?php endif; ?>
         </div>
         <p class="lot-item__category">Категория: <span><?=htmlspecialchars($lot['category']);?></span></p>
         <p class="lot-item__description"><?=htmlspecialchars($lot['message']);?></p>

@@ -30,9 +30,7 @@
         <?php foreach ($lots as $id => $lot): ?>
         <li class="lots__item lot">
             <div class="lot__image">
-                <?php if (isset($lot['photo'])): ?>
                 <img src="<?=strip_tags($lot['photo'])?>" width="350" height="260" alt="Изображение лота">
-                <?php endif; ?>
             </div>
             <div class="lot__info">
                 <span class="lot__category"><?=htmlspecialchars($lot['category'])?></span>

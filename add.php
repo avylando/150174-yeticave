@@ -32,20 +32,44 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
             }
         }
 
+        if (isset($lot['price']) && (int) $lot['price'] <= 0) {
+            $errors['price'] = 'Значение должно быть больше нуля';
+        }
+
+        if (isset($lot['step']) && (int) $lot['step'] <= 0) {
+            $errors['step'] = 'Значение должно быть больше нуля';
+        }
+
+        if (isset($lot['date'])) {
+            if (strtotime($lot['date'])) {
+                $end_date = strtotime($lot['date']);
+                $days_remain = floor(($end_date - time()) / 86400);
+
+                if ($days_remain < 0) {
+                    $errors['date'] = 'Введите корректную дату';
+
+                }
+
+            } else {
+                $errors['date'] = 'Введите дату в формате «ДД.ММ.ГГГГ»';
+            }
+        }
+
         if (is_uploaded_file($_FILES['photo']['tmp_name']) && empty($errors)) {
             $tmp_name = $_FILES['photo']['tmp_name'];
             $path = 'img/' . $_FILES['photo']['name'];
 
-            $file_info = finfo_open(FILEINFO_MIME_TYPE);
-            $file_type = finfo_file($file_info, $tmp_name);
+            $file_type = mime_content_type($tmp_name);
 
-            if ($file_type !== "image/png" && $file_type !== "image/jpeg" && $file_type !== "image/gif") {
-                $errors['photo'] = 'Загрузите картинку в поддерживаемом формате (PNG, JPG, GIF)';
+            if ($file_type !== "image/png" && $file_type !== "image/jpeg") {
+                $errors['photo'] = 'Загрузите изображение в поддерживаемом формате (PNG, JPG)';
 
             } else {
                 move_uploaded_file($tmp_name, $path);
                 $lot['photo'] = $path;
             }
+        } else if (!is_uploaded_file($_FILES['photo']['tmp_name'])) {
+            $errors['photo'] = 'Загрузите изображение';
         }
 
         if (count($errors)) {
