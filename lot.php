@@ -39,11 +39,6 @@ $page_content = render_template('templates/lot.php', [
 
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Просмотр лота',
-    'authorization' => [
-        'is_auth' => $is_auth,
-        'user_name' => $user_name,
-        'user_avatar' => $user_avatar
-        ],
     'categories' => $categories,
     'content' => $page_content
 ]);
