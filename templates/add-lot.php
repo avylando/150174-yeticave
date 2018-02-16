@@ -1,26 +1,13 @@
 <nav class="nav">
     <ul class="nav__list container">
-        <li class="nav__item">
-            <a href="all-lots.html">Доски и лыжи</a>
+    <?php foreach ($categories as $number => $category) : ?>
+        <li class="nav__item <?= ($number === 0) ? "nav__item--current" : ""?>">
+            <a href="all-lots.html"><?=$category?></a>
         </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Крепления</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Ботинки</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Одежда</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Инструменты</a>
-        </li>
-        <li class="nav__item">
-            <a href="all-lots.html">Разное</a>
-        </li>
+    <?php endforeach; ?>
     </ul>
 </nav>
-<?php $classname = count($errors) ? "form--invalid" : "";?>
+<?php $classname = !empty($errors) ? "form--invalid" : "";?>
 <form class="form form--add-lot container <?=$classname;?>" action="../add.php" method="post" enctype="multipart/form-data">
     <h2>Добавление лота</h2>
     <div class="form__container-two">
@@ -36,12 +23,9 @@
             <label for="category">Категория</label>
             <select id="category" name="category">
                 <option>Выберите категорию</option>
-                <option>Доски и лыжи</option>
-                <option>Крепления</option>
-                <option>Ботинки</option>
-                <option>Одежда</option>
-                <option>Инструменты</option>
-                <option>Разное</option>
+                <?php foreach ($categories as $category): ?>
+                <option <?= ($lot['category'] === $category) ? 'selected' : '';?>><?=$category?></option>
+                <?php endforeach; ?>
             </select>
             <span class="form__error"><?=$errors['category'];?></span>
         </div>
@@ -95,5 +79,5 @@
         </div>
     </div>
     <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
-    <button type="submit" class="button">Добавить лот</button>
+    <button type="submit" name="add-lot" class="button">Добавить лот</button>
 </form>

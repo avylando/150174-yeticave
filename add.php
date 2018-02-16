@@ -3,7 +3,10 @@
 require_once 'functions.php';
 require_once 'data.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+$lot = null;
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add-lot'])) {
     $lot = $_POST;
 
     $required = ['title', 'category', 'message', 'price', 'step', 'date'];
@@ -16,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'date' => 'дату завершения торгов'
     ];
 
-    $errors = [];
+
 
     foreach ($required as $field) {
         if (empty($lot[$field])) {
@@ -28,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if (is_uploaded_file($_FILES['photo']['tmp_name'])) {
+    if (is_uploaded_file($_FILES['photo']['tmp_name']) && empty($errors)) {
         $tmp_name = $_FILES['photo']['tmp_name'];
         $path = 'img/' . $_FILES['photo']['name'];
 
@@ -37,9 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($file_type !== "image/png" && $file_type !== "image/jpeg" && $file_type !== "image/gif") {
             $errors['photo'] = 'Загрузите картинку в поддерживаемом формате (PNG, JPG, GIF)';
-        }
-
-        if (empty($errors)) {
+        } else {
             move_uploaded_file($tmp_name, $path);
             $lot['photo'] = $path;
         }
@@ -47,16 +48,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (count($errors)) {
         $page_content = render_template('templates/add-lot.php', [
+            'categories' => $categories,
             'lot' => $lot,
             'errors' => $errors
-            ]);
+        ]);
     } else {
         $page_content = render_template('templates/lot.php', [
             'lot' => $lot
-            ]);
+        ]);
     }
 } else {
-    $page_content = render_template('templates/add-lot.php', []);
+    $page_content = render_template('templates/add-lot.php', [
+        'categories' => $categories,
+        'lot' => $lot,
+        'errors' => $errors
+    ]);
 }
 
 $layout_content = render_template('templates/layout.php', [
