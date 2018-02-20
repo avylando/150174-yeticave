@@ -3,8 +3,6 @@
 require_once 'functions.php';
 require_once 'data.php';
 
-session_start();
-
 if (!empty($_SESSION) && isset($_SESSION['user'])) {
     $lot = null;
     $errors = [];

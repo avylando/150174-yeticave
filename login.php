@@ -4,8 +4,6 @@ require_once 'functions.php';
 require_once 'data.php';
 require_once 'userdata.php';
 
-session_start();
-
 $login = null;
 $errors = [];
 
