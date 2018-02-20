@@ -30,10 +30,10 @@
         <?php foreach ($lots as $id => $lot): ?>
         <li class="lots__item lot">
             <div class="lot__image">
-                <img src="<?=$lot['photo']?>" width="350" height="260" alt="<?=$lot['alt']?>">
+                <img src="<?=strip_tags($lot['photo'])?>" width="350" height="260" alt="Изображение лота">
             </div>
             <div class="lot__info">
-                <span class="lot__category"><?=$lot['category']?></span>
+                <span class="lot__category"><?=htmlspecialchars($lot['category'])?></span>
                 <h3 class="lot__title"><a class="text-link" href="lot.php?id=<?=$id?>"><?=htmlspecialchars($lot['title'])?></a></h3>
                 <div class="lot__state">
                     <div class="lot__rate">

@@ -21,14 +21,12 @@ $page_content = render_template('templates/history.php', [
     'related_lots' => $related_lots
 ]);
 
-
 $layout_content = render_template('templates/layout.php', [
     'title' => 'История просмотров',
-    'authorization' => [
-        'is_auth' => $is_auth,
-        'user_name' => $user_name,
-        'user_avatar' => $user_avatar
-        ],
+    'session' => [
+        'is_authorized' => $is_authorized,
+        'user' => $user
+    ],
     'categories' => $categories,
     'content' => $page_content
 ]);

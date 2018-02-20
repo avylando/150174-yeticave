@@ -34,16 +34,18 @@ if (empty($lot)) {
 }
 
 $page_content = render_template('templates/lot.php', [
-    'lot' => $lot
+    'lot' => $lot,
+    'session' => [
+        'is_authorized' => $is_authorized
+    ],
 ]);
 
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Просмотр лота',
-    'authorization' => [
-        'is_auth' => $is_auth,
-        'user_name' => $user_name,
-        'user_avatar' => $user_avatar
-        ],
+    'session' => [
+        'is_authorized' => $is_authorized,
+        'user' => $user
+    ],
     'categories' => $categories,
     'content' => $page_content
 ]);
