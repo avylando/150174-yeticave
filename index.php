@@ -9,7 +9,10 @@ $page_content = render_template('templates/index.php', [
 
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Главная страница',
-    'user' => $user,
+    'session' => [
+        'is_authorized' => $is_authorized,
+        'user' => $user
+    ],
     'categories' => $categories,
     'content' => $page_content
 ]);

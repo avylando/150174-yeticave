@@ -35,12 +35,17 @@ if (empty($lot)) {
 
 $page_content = render_template('templates/lot.php', [
     'lot' => $lot,
-    'user' => $user
+    'session' => [
+        'is_authorized' => $is_authorized
+    ],
 ]);
 
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Просмотр лота',
-    'user' => $user,
+    'session' => [
+        'is_authorized' => $is_authorized,
+        'user' => $user
+    ],
     'categories' => $categories,
     'content' => $page_content
 ]);

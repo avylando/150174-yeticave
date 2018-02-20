@@ -21,13 +21,13 @@
             <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
 
             <nav class="user-menu">
-            <?php if (!empty($user)):
-                    $avatar = isset($user['avatar']) ? $user['avatar'] : 'img/user.jpg';?>
+            <?php if ($session['is_authorized']):
+                    $avatar = isset($session['user']['avatar']) ? $session['user']['avatar'] : 'img/user.jpg';?>
                 <div class="user-menu__image">
                     <img src="<?=$avatar?>" width="40" height="40" alt="Пользователь">
                 </div>
                 <div class="user-menu__logged">
-                    <p><?=$user['name']; ?></p>
+                    <p><?=$session['user']['name']; ?></p>
                     <a href="logout.php">Выход</a>
                 </div>
             <?php else: ?>

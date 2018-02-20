@@ -2,10 +2,15 @@
 
 session_start();
 
+$is_authorized = false;
 $user = [];
 
-if (!empty($_SESSION) && isset($_SESSION['user'])) {
+if (!empty($_SESSION)) {
+
+    if (isset($_SESSION['user'])) {
+    $is_authorized = true;
     $user = $_SESSION['user'];
+    }
 }
 
 $categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];

@@ -10,7 +10,7 @@
         <p class="lot-item__description"><?=htmlspecialchars($lot['message']);?></p>
         </div>
         <div class="lot-item__right">
-        <?php if (!empty($user)): ?>
+        <?php if ($session['is_authorized']): ?>
         <div class="lot-item__state">
             <div class="lot-item__timer timer"><?=set_timer()?></div>
             <div class="lot-item__cost-state">
