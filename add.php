@@ -100,6 +100,7 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
 
 $layout_content = render_template('templates/layout.php', [
     'title'      => 'Добавить лот',
+    'user' => $user,
     'categories' => $categories,
     'content'    => $page_content,
 ]);

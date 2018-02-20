@@ -1,5 +1,3 @@
-<?php session_start(); ?>
-
 <section class="lot-item container">
     <?php if(isset($lot)): ?>
     <h2><?=htmlspecialchars($lot['title']);?></h2>
@@ -12,7 +10,7 @@
         <p class="lot-item__description"><?=htmlspecialchars($lot['message']);?></p>
         </div>
         <div class="lot-item__right">
-        <?php if (!empty($_SESSION) && isset($_SESSION['user'])): ?>
+        <?php if (!empty($user)): ?>
         <div class="lot-item__state">
             <div class="lot-item__timer timer"><?=set_timer()?></div>
             <div class="lot-item__cost-state">

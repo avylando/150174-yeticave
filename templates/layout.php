@@ -1,5 +1,3 @@
-<?php session_start(); ?>
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -23,13 +21,13 @@
             <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
 
             <nav class="user-menu">
-            <?php if (!empty($_SESSION) && isset($_SESSION['user'])):
-                    $avatar = isset($_SESSION['user']['avatar']) ? $_SESSION['user']['avatar'] : 'img/user.jpg';?>
+            <?php if (!empty($user)):
+                    $avatar = isset($user['avatar']) ? $user['avatar'] : 'img/user.jpg';?>
                 <div class="user-menu__image">
                     <img src="<?=$avatar?>" width="40" height="40" alt="Пользователь">
                 </div>
                 <div class="user-menu__logged">
-                    <p><?=$_SESSION['user']['name']; ?></p>
+                    <p><?=$user['name']; ?></p>
                     <a href="logout.php">Выход</a>
                 </div>
             <?php else: ?>

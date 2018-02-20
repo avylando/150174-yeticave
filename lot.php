@@ -34,11 +34,13 @@ if (empty($lot)) {
 }
 
 $page_content = render_template('templates/lot.php', [
-    'lot' => $lot
+    'lot' => $lot,
+    'user' => $user
 ]);
 
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Просмотр лота',
+    'user' => $user,
     'categories' => $categories,
     'content' => $page_content
 ]);
