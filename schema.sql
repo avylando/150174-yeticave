@@ -4,7 +4,7 @@ USE yeticave_db;
 
 CREATE TABLE user (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_name CHAR(64) NOT NULL,
+  name CHAR(64) NOT NULL,
   email CHAR(64) NOT NULL,
   password CHAR(64) NOT NULL,
   contacts CHAR(255) NOT NULL,
@@ -13,13 +13,13 @@ CREATE TABLE user (
 
 CREATE TABLE category (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  cat_name CHAR(64) NOT NULL
+  name CHAR(64) NOT NULL
 );
 
 CREATE TABLE lot (
   id INT AUTO_INCREMENT PRIMARY KEY,
   creation_date DATETIME NOT NULL DEFAULT NOW(),
-  lot_name CHAR(64) NOT NULL,
+  name CHAR(64) NOT NULL,
   category_id INT NOT NULL,
   message CHAR(255) NOT NULL,
   photo CHAR(128) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE lot (
 
 CREATE TABLE bet (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  bet_date DATETIME NOT NULL DEFAULT NOW(),
+  date DATETIME NOT NULL DEFAULT NOW(),
   sum INT NOT NULL,
   lot_id INT NOT NULL,
   user_id INT NOT NULL,
@@ -44,5 +44,5 @@ CREATE TABLE bet (
 );
 
 CREATE UNIQUE INDEX mail ON user (email);
-CREATE INDEX lot_name ON lot (lot_name);
+CREATE INDEX lot_name ON lot (name);
 CREATE INDEX lot_category ON lot (category_id);
