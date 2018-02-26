@@ -1,5 +1,6 @@
 <?php
 require_once 'functions.php';
+require_once 'init.php';
 require_once 'data.php';
 
 $page_content = render_template('templates/index.php', [

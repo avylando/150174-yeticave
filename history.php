@@ -10,8 +10,10 @@ if (!empty($_COOKIE) && isset($_COOKIE['history'])) {
     $viewed_ids = json_decode($view_history);
 
     foreach ($viewed_ids as $id) {
-        if (isset($lots[$id])) {
-            $related_lots[$id] = $lots[$id];
+        foreach ($lots as $lot) {
+            if ($id == $lot['id']) {
+                array_push($related_lots, $lot);
+            }
         }
     }
 }

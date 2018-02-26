@@ -1,5 +1,8 @@
 <?php
 
+require_once 'functions.php';
+require_once 'init.php';
+
 session_start();
 
 $is_authorized = false;
@@ -13,56 +16,39 @@ if (!empty($_SESSION)) {
     }
 }
 
-$categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
+$categories = [];
+$lots = [];
 
-$lots = [
-    0 => [
-        'title' => '2014 Rossignol District Snowboard',
-        'category' => $categories[0],
-        'price' => 10999,
-        'photo' => 'img/lot-1.jpg'
-    ],
+if (!$db_link) {
+    show_error(mysqli_connect_error());
 
-    1 => [
-        'title' => 'DC Ply Mens 2016/2017 Snowboard',
-        'category' => $categories[0],
-        'price' => 	159999,
-        'photo' => 'img/lot-2.jpg'
-    ],
+} else {
+    // Запрос списка открытых лотов
+    $sql = 'SELECT lot.id, creation_date, lot.name, category.name AS category, message, photo, start_price, step, expiration_date
+    FROM lot JOIN category ON category.id = lot.category_id
+    WHERE NOW() BETWEEN creation_date AND expiration_date
+    ORDER BY creation_date DESC';
+    $result = mysqli_query($db_link, $sql);
 
-    2 => [
-        'title' => 'Крепления Union Contact Pro 2015 года размер L/XL',
-        'category' => $categories[1],
-        'price' => 	8000,
-        'photo' => 'img/lot-3.jpg'
-    ],
+    if ($result) {
+        $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    3 => [
-        'title' => 'Ботинки для сноуборда DC Mutiny Charocal',
-        'category' => $categories[2],
-        'price' => 	10999,
-        'photo' => 'img/lot-4.jpg'
-    ],
+    } else {
+        show_error(mysqli_error($db_link));
+    }
 
-    4 => [
-        'title' => 'Куртка для сноуборда DC Mutiny Charocal',
-        'category' => $categories[3],
-        'price' => 	7500,
-        'photo' => 'img/lot-5.jpg'
-    ],
+    // Запрос списка категорий
+    $sql = 'SELECT name FROM category';
+    $result = mysqli_query($db_link, $sql);
 
-    5 => [
-        'title' => 'Маска Oakley Canopy',
-        'category' => $categories[5],
-        'price' => 	5400,
-        'photo' => 'img/lot-6.jpg'
-    ]
-];
+    if ($result) {
+        $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-// ставки пользователей, которыми надо заполнить таблицу
-$bets = [
-    ['name' => 'Иван', 'price' => 11500, 'ts' => strtotime('-' . rand(1, 50) .' minute')],
-    ['name' => 'Константин', 'price' => 11000, 'ts' => strtotime('-' . rand(1, 18) .' hour')],
-    ['name' => 'Евгений', 'price' => 10500, 'ts' => strtotime('-' . rand(25, 50) .' hour')],
-    ['name' => 'Семён', 'price' => 10000, 'ts' => strtotime('last week')]
-];
+        foreach ($rows as $row) {
+            array_push($categories, $row['name']);
+        }
+
+    } else {
+        show_error(mysqli_error($db_link));
+    }
+}

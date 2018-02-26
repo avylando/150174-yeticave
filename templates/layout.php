@@ -21,10 +21,9 @@
             <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
 
             <nav class="user-menu">
-            <?php if ($session['is_authorized']):
-                    $avatar = isset($session['user']['avatar']) ? $session['user']['avatar'] : 'img/user.jpg';?>
+            <?php if ($session['is_authorized']): ?>
                 <div class="user-menu__image">
-                    <img src="<?=$avatar?>" width="40" height="40" alt="Пользователь">
+                    <img src="<?=$session['user']['avatar']?>" width="40" height="40" alt="Пользователь">
                 </div>
                 <div class="user-menu__logged">
                     <p><?=$session['user']['name']; ?></p>
@@ -33,7 +32,7 @@
             <?php else: ?>
                 <ul class="user-menu__list">
                     <li class="user-menu__item">
-                        <a href="#">Регистрация</a>
+                        <a href="sign-up.php">Регистрация</a>
                     </li>
                     <li class="user-menu__item">
                         <a href="login.php">Вход</a>
@@ -50,6 +49,7 @@
     </main>
 
     <footer class="main-footer">
+        <?php if (isset($categories)): ?>
         <nav class="nav">
             <ul class="nav__list container">
                 <?php foreach ($categories as $category): ?>
@@ -59,6 +59,7 @@
                 <?php endforeach; ?>
             </ul>
         </nav>
+        <?php endif; ?>
         <div class="main-footer__bottom container">
             <div class="main-footer__copyright">
                 <p>© 2018, YetiCave</p>

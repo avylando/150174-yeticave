@@ -2,7 +2,6 @@
 
 require_once 'functions.php';
 require_once 'data.php';
-require_once 'userdata.php';
 
 $login = null;
 $errors = [];
@@ -19,24 +18,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         }
     }
 
-    $current_user = search_user_by_email($login['email'], $users);
-
-    if (empty($errors) && isset($current_user)) {
-
-        if (password_verify($login['password'], $current_user['password'])) {
-            $_SESSION['user'] = $current_user;
-            header('Location: /index.php');
-            exit();
+    if (empty($errors)) {
+        if (!$db_link) {
+            show_error(mysqli_connect_error());
 
         } else {
-            $errors['password'] = 'Вы ввели неверный пароль';
+            $input_user = mysqli_real_escape_string($db_link, $login['email']);
+            $sql = "SELECT email, password, name, contacts, avatar FROM user
+            WHERE email = '$input_user'";
+            $result = mysqli_query($db_link, $sql);
+
+            if ($result) {
+                $current_user = mysqli_fetch_assoc($result);
+
+                if (!empty($current_user)) {
+                    if (password_verify($login['password'], $current_user['password'])) {
+                        $_SESSION['user'] = $current_user;
+                        header('Location: /index.php');
+                        exit();
+
+                    } else {
+                        $errors['password'] = 'Вы ввели неверный пароль';
+                    }
+
+                } else {
+                    $errors['email'] = 'Пользователь не найден';
+                }
+
+            } else {
+                show_error(mysqli_error($db_link));
+            }
         }
 
-    } else if (empty($errors) && empty($current_user)) {
-        $errors['email'] = 'Пользователь не найден';
     }
 
-    if (count($errors)) {
+    if (!empty($errors)) {
         $page_content = render_template('templates/login.php', [
             'categories' => $categories,
             'login' => $login,
