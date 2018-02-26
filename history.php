@@ -1,13 +1,14 @@
 <?php
 
-require_once 'functions.php';
-require_once 'data.php';
+require_once 'init.php';
 
+$lots = [];
 $related_lots = [];
 
 if (!empty($_COOKIE) && isset($_COOKIE['history'])) {
     $view_history = $_COOKIE['history'];
     $viewed_ids = json_decode($view_history);
+    $lots = get_active_lots($db_link);
 
     foreach ($viewed_ids as $id) {
         foreach ($lots as $lot) {
@@ -19,18 +20,10 @@ if (!empty($_COOKIE) && isset($_COOKIE['history'])) {
 }
 
 $page_content = render_template('templates/history.php', [
-    'categories' => $categories,
+    'categories' => get_categories($db_link),
     'related_lots' => $related_lots
 ]);
 
-$layout_content = render_template('templates/layout.php', [
-    'title' => 'История просмотров',
-    'session' => [
-        'is_authorized' => $is_authorized,
-        'user' => $user
-    ],
-    'categories' => $categories,
-    'content' => $page_content
-]);
+$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'История просмотров', $page_content));
 
 print($layout_content);

@@ -62,18 +62,71 @@ function set_timer($date) {
     return 'Некорректный формат даты';
 }
 
-function search_user_by_email($email, $users) {
-    $current_user = null;
+function check_authorization() {
+    session_start();
+    $session = [];
 
-    foreach($users as $user) {
+    if (!empty($_SESSION)) {
 
-        if ($user['email'] == $email) {
-            $current_user = $user;
-            break;
+        if (isset($_SESSION['user'])) {
+            $session['is_authorized'] = true;
+            $session['user'] = $_SESSION['user'];
         }
     }
 
-    return $current_user;
+    return $session;
+}
+
+function get_categories($connect) {
+    if (!$connect) {
+        show_error(mysqli_connect_error());
+
+    } else {
+        $sql = 'SELECT name FROM category';
+        $result = mysqli_query($connect, $sql);
+
+        if ($result) {
+            $categories = [];
+            $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+            foreach ($rows as $row) {
+                array_push($categories, $row['name']);
+            }
+            return $categories;
+
+        } else {
+            show_error(mysqli_error($connect));
+        }
+    }
+}
+
+function get_active_lots($connect) {
+    if (!$connect) {
+        show_error(mysqli_connect_error());
+
+    } else {
+        $sql = 'SELECT lot.id, creation_date, lot.name, category.name AS category, message, photo, start_price, step, expiration_date
+        FROM lot JOIN category ON category.id = lot.category_id
+        WHERE NOW() BETWEEN creation_date AND expiration_date';
+        $result = mysqli_query($connect, $sql);
+
+        if ($result) {
+            return mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+        } else {
+            show_error(mysqli_error($connect));
+        }
+    }
+}
+
+function prepare_data_for_layout($connect, $title, $content) {
+    return $data = [
+        'title' => $title,
+        'session' => check_authorization(),
+        'categories' => get_categories($connect),
+        'content' => $content
+    ];
+
 }
 
 ?>

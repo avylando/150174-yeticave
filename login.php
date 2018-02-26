@@ -1,7 +1,8 @@
 <?php
 
-require_once 'functions.php';
-require_once 'data.php';
+require_once 'init.php';
+
+session_start();
 
 $login = null;
 $errors = [];
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
     if (!empty($errors)) {
         $page_content = render_template('templates/login.php', [
-            'categories' => $categories,
+            'categories' => get_categories($db_link),
             'login' => $login,
             'errors' => $errors
         ]);
@@ -68,17 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
     } else {
         $page_content = render_template('templates/login.php', [
-            'categories' => $categories,
+            'categories' => get_categories($db_link),
             'login' => $login,
             'errors' => $errors
         ]);
     }
 }
 
-$layout_content = render_template('templates/layout.php', [
-    'title' => 'Вход',
-    'categories' => $categories,
-    'content' => $page_content
-]);
+$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'Вход', $page_content));
 
 print($layout_content);

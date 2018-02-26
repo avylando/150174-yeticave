@@ -1,21 +1,14 @@
 <?php
-require_once 'functions.php';
+
 require_once 'init.php';
-require_once 'data.php';
+
+$session = check_authorization();
 
 $page_content = render_template('templates/index.php', [
-    'categories' => $categories,
-    'lots' => $lots
+    'categories' => get_categories($db_link),
+    'lots' => get_active_lots($db_link)
 ]);
 
-$layout_content = render_template('templates/layout.php', [
-    'title' => 'Главная страница',
-    'session' => [
-        'is_authorized' => $is_authorized,
-        'user' => $user
-    ],
-    'categories' => $categories,
-    'content' => $page_content
-]);
+$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'Главная страница', $page_content));
 
 print($layout_content);

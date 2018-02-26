@@ -2,24 +2,25 @@
     <h2 class="promo__title">Нужен стафф для катки?</h2>
     <p class="promo__text">На нашем интернет-аукционе ты найдёшь самое эксклюзивное сноубордическое и горнолыжное снаряжение.</p>
     <ul class="promo__list">
-        <li class="promo__item promo__item--boards">
-            <a class="promo__link" href="all-lots.html">Доски и лыжи</a>
-        </li>
-        <li class="promo__item promo__item--attachment">
-            <a class="promo__link" href="all-lots.html">Крепления</a>
-        </li>
-        <li class="promo__item promo__item--boots">
-            <a class="promo__link" href="all-lots.html">Ботинки</a>
-        </li>
-        <li class="promo__item promo__item--clothing">
-            <a class="promo__link" href="all-lots.html">Одежда</a>
-        </li>
-        <li class="promo__item promo__item--tools">
-            <a class="promo__link" href="all-lots.html">Инструменты</a>
-        </li>
-        <li class="promo__item promo__item--other">
-            <a class="promo__link" href="all-lots.html">Разное</a>
-        </li>
+    <?php foreach ($categories as $category): ?>
+        <? switch ($category):
+        case 'Доски и лыжи': $mod = 'boards';
+            break;
+        case 'Крепления': $mod = 'attachment';
+            break;
+        case 'Ботинки': $mod = 'boots';
+            break;
+        case 'Одежда': $mod = 'clothing';
+            break;
+        case 'Инструменты': $mod = 'tools';
+            break;
+        case 'Разное': $mod = 'other';
+            break;
+        endswitch; ?>
+            <li class="promo__item promo__item--<?=$mod?>">
+                <a class="promo__link" href="all-lots.html"><?=$category?></a>
+            </li>
+    <?php endforeach; ?>
     </ul>
 </section>
 <section class="lots">

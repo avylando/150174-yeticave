@@ -1,8 +1,6 @@
 <?php
 
-require_once 'functions.php';
 require_once 'init.php';
-require_once 'data.php';
 require_once 'mysql_helper.php';
 
 $sign_up = null;
@@ -80,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
 
     } else {
         $page_content = render_template('templates/sign-up.php', [
-            'categories' => $categories,
+            'categories' => get_categories($db_link),
             'sign_up' => $sign_up,
             'errors' => $errors
         ]);
@@ -88,20 +86,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
 
 } else {
     $page_content = render_template('templates/sign-up.php', [
-        'categories' => $categories,
+        'categories' => get_categories($db_link),
         'sign_up' => $sign_up,
         'errors' => $errors
     ]);
 }
 
-$layout_content = render_template('templates/layout.php', [
-    'title' => 'Регистрация',
-    'session' => [
-        'is_authorized' => $is_authorized,
-        'user' => $user
-    ],
-    'categories' => $categories,
-    'content' => $page_content
-]);
+$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'Регистрация', $page_content));
 
 print($layout_content);

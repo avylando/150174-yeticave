@@ -21,6 +21,7 @@
             <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
 
             <nav class="user-menu">
+
             <?php if ($session['is_authorized']): ?>
                 <div class="user-menu__image">
                     <img src="<?=$session['user']['avatar']?>" width="40" height="40" alt="Пользователь">

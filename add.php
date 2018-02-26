@@ -1,7 +1,8 @@
 <?php
 
-require_once 'functions.php';
-require_once 'data.php';
+require_once 'init.php';
+
+session_start();
 
 if (!empty($_SESSION) && isset($_SESSION['user'])) {
     $lot = null;
@@ -72,7 +73,7 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
 
         if (count($errors)) {
             $page_content = render_template('templates/add-lot.php', [
-                'categories' => $categories,
+                'categories' => get_categories($db_link),
                 'lot' => $lot,
                 'errors' => $errors
             ]);
@@ -85,7 +86,7 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
 
     } else {
         $page_content = render_template('templates/add-lot.php', [
-            'categories' => $categories,
+            'categories' => get_categories($db_link),
             'lot' => $lot,
             'errors' => $errors
         ]);
@@ -96,14 +97,6 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
     exit();
 }
 
-$layout_content = render_template('templates/layout.php', [
-    'title'      => 'Добавить лот',
-    'session' => [
-        'is_authorized' => $is_authorized,
-        'user' => $user
-    ],
-    'categories' => $categories,
-    'content'    => $page_content,
-]);
+$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'Добавить лот', $page_content));
 
 print($layout_content);

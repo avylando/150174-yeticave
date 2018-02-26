@@ -1,8 +1,6 @@
 <?php
 
-require_once 'functions.php';
 require_once 'init.php';
-require_once 'data.php';
 
 $lot = null;
 $current_id = null;
@@ -61,20 +59,10 @@ if (empty($lot)) {
 
 $page_content = render_template('templates/lot.php', [
     'lot' => $lot,
-    'session' => [
-        'is_authorized' => $is_authorized
-    ],
+    'session' => check_authorization(),
     'bets' => $bets
 ]);
 
-$layout_content = render_template('templates/layout.php', [
-    'title' => 'Просмотр лота',
-    'session' => [
-        'is_authorized' => $is_authorized,
-        'user' => $user
-    ],
-    'categories' => $categories,
-    'content' => $page_content
-]);
+$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'Просмотр лота', $page_content));
 
 print($layout_content);
