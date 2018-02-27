@@ -2,42 +2,27 @@
 
 require_once 'init.php';
 
-$lot = null;
 $current_id = null;
+$lot = null;
+$bets = [];
 
 if (isset($_GET['id'])) {
+    try {
+        $id = intval($_GET['id']);
+        $current_id = $id;
+        $lot = get_lot_by_id($db_link, $id);
 
-    // Запрос лота
-    $id = intval($_GET['id']);
-    $current_id = $id;
-    $sql = 'SELECT lot.name, category.name AS category, message, photo, start_price, step, expiration_date FROM lot
-    JOIN category ON lot.category_id = category.id
-    WHERE lot.id = ' . $id;
-
-    $result = mysqli_query($db_link, $sql);
-
-    if ($result) {
-        if (!mysqli_num_rows($result)) {
-            http_response_code(404);
-            show_error('Лот не найден');
+        if ($lot) {
+            $bets = get_bets_by_lot_id($db_link, $id);
 
         } else {
-            $lot = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
-            // Запрос ставок пользователей
-            $sql = 'SELECT bet.sum, user.name AS user, bet.date FROM bet
-            JOIN lot ON bet.lot_id = lot.id
-            JOIN user ON bet.user_id = user.id
-            WHERE bet.lot_id = ' . $id;
-
-            $result = mysqli_query($db_link, $sql);
-            $bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+            http_response_code(404);
+            exit();
         }
 
-    } else {
-        show_error(mysqli_error($db_link));
+    } catch (Exception $error) {
+        $page_content['error'] = $error->getMessage();
     }
-
 }
 
 $viewed_ids = [];
@@ -52,17 +37,15 @@ if (!in_array($current_id, $viewed_ids)) {
     setcookie('history', $updated_history, strtotime('+15 days'));
 }
 
-if (empty($lot)) {
-    http_response_code(404);
-    exit();
+if (!isset($page_content)) {
+    $page_content = render_template('templates/lot.php', [
+        'lot' => $lot,
+        'session' => check_authorization($_SESSION),
+        'bets' => $bets
+    ]);
 }
 
-$page_content = render_template('templates/lot.php', [
-    'lot' => $lot,
-    'session' => check_authorization(),
-    'bets' => $bets
-]);
-
-$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'Просмотр лота', $page_content));
+$layout_content = render_template('templates/layout.php',
+prepare_data_for_layout($db_link, 'Просмотр лота', $_SESSION, $page_content));
 
 print($layout_content);

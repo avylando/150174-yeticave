@@ -2,8 +2,6 @@
 
 require_once 'init.php';
 
-session_start();
-
 $login = null;
 $errors = [];
 
@@ -20,45 +18,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     }
 
     if (empty($errors)) {
-        if (!$db_link) {
-            show_error(mysqli_connect_error());
+        try {
+            $current_user = get_user_by_login($db_link, $login['email']);
 
-        } else {
-            $input_user = mysqli_real_escape_string($db_link, $login['email']);
-            $sql = "SELECT email, password, name, contacts, avatar FROM user
-            WHERE email = '$input_user'";
-            $result = mysqli_query($db_link, $sql);
-
-            if ($result) {
-                $current_user = mysqli_fetch_assoc($result);
-
-                if (!empty($current_user)) {
-                    if (password_verify($login['password'], $current_user['password'])) {
-                        $_SESSION['user'] = $current_user;
-                        header('Location: /index.php');
-                        exit();
-
-                    } else {
-                        $errors['password'] = 'Вы ввели неверный пароль';
-                    }
-
-                } else {
-                    $errors['email'] = 'Пользователь не найден';
+            if (!empty($current_user)) {
+                if (password_verify($login['password'], $current_user['password'])) {
+                    $_SESSION['user'] = $current_user;
+                    header('Location: /index.php');
+                    exit();
                 }
 
-            } else {
-                show_error(mysqli_error($db_link));
-            }
-        }
+                $errors['password'] = 'Вы ввели неверный пароль';
 
+            } else {
+                $errors['email'] = 'Пользователь не найден';
+            }
+
+        } catch (Exception $error)  {
+            $page_content['error'] = $error->getMessage();
+        }
     }
 
     if (!empty($errors)) {
-        $page_content = render_template('templates/login.php', [
-            'categories' => get_categories($db_link),
-            'login' => $login,
-            'errors' => $errors
-        ]);
+        try {
+            $page_content = render_template('templates/login.php', [
+                'categories' => get_categories($db_link),
+                'login' => $login,
+                'errors' => $errors
+            ]);
+
+        } catch (Exception $error)  {
+            $page_content['error'] = $error->getMessage();
+        }
     }
 
 } else {
@@ -66,16 +57,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     if (!empty($_SESSION) && isset($_SESSION['user'])) {
         header('Location: /index.php');
         exit();
+    }
 
-    } else {
+    try {
         $page_content = render_template('templates/login.php', [
             'categories' => get_categories($db_link),
             'login' => $login,
             'errors' => $errors
         ]);
+
+    } catch (Exception $error)  {
+        $page_content['error'] = $error->getMessage();
     }
 }
 
-$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'Вход', $page_content));
+$layout_content = render_template('templates/layout.php',
+prepare_data_for_layout($db_link, 'Вход', $_SESSION, $page_content));
 
 print($layout_content);

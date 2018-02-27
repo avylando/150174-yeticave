@@ -19,11 +19,17 @@ if (!empty($_COOKIE) && isset($_COOKIE['history'])) {
     }
 }
 
-$page_content = render_template('templates/history.php', [
-    'categories' => get_categories($db_link),
-    'related_lots' => $related_lots
-]);
+try {
+    $page_content = render_template('templates/history.php', [
+        'categories' => get_categories($db_link),
+        'related_lots' => $related_lots
+    ]);
 
-$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'История просмотров', $page_content));
+} catch (Exception $error)  {
+    $page_content['error'] = $error->getMessage();
+}
+
+$layout_content = render_template('templates/layout.php',
+prepare_data_for_layout($db_link, 'История просмотров', $_SESSION, $page_content));
 
 print($layout_content);

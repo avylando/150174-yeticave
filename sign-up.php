@@ -1,7 +1,6 @@
 <?php
 
 require_once 'init.php';
-require_once 'mysql_helper.php';
 
 $sign_up = null;
 $errors = [];
@@ -27,21 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
         $errors['email'] = 'Введите валидный E-mail';
 
     } else {
+        try {
+            $result = search_email_in_db($db_link, $sign_up['email']);
 
-        $search_email = mysqli_real_escape_string($db_link, $sign_up['email']);
-        $sql = "SELECT email FROM user WHERE email = '$search_email'";
-
-        $result = mysqli_query($db_link, $sql);
-        if ($result) {
-            $found = mysqli_fetch_assoc($result);
-
-            if(!empty($found)) {
-                $errors['email'] = 'Пользователь с таким адресом уже зарегистрирован';
+            if ($result) {
+                $errors['email'] = $result;
             }
-        } else {
-            show_error(mysqli_error($db_link));
-        }
 
+        } catch (Exception $error) {
+            $page_content['error'] = $error->getMessage();
+        }
     }
 
     $avatar_path = 'img/user.jpg';
@@ -61,37 +55,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
 
     if (empty($errors)) {
 
-        $sql = "INSERT INTO user (name, email, password, contacts, avatar)
-        VALUES (?, ?, ?, ?, ?)";
+        try {
+            $result = add_user($db_link, $sign_up, $avatar_path);
 
-        $user_password = password_hash($sign_up['password'], PASSWORD_DEFAULT);
-        $stmt = db_get_prepare_stmt($db_link, $sql, [$sign_up['user_name'], $sign_up['email'], $user_password, $sign_up['contacts'], $avatar_path]);
-        $result = mysqli_stmt_execute($stmt);
+            if ($result) {
+                header('Location: login.php');
+                exit();
+            }
 
-        if ($result) {
-            header('Location: login.php');
-            exit();
-
-        } else {
-            show_error(mysqli_error($db_link));
+        } catch (Exception $error) {
+            $page_content['error'] = $error->getMessage();
         }
 
     } else {
+        try {
+            $page_content = render_template('templates/sign-up.php', [
+                'categories' => get_categories($db_link),
+                'sign_up' => $sign_up,
+                'errors' => $errors
+            ]);
+
+        } catch (Exception $error)  {
+            $page_content['error'] = $error->getMessage();
+        }
+    }
+
+} else {
+    try {
         $page_content = render_template('templates/sign-up.php', [
             'categories' => get_categories($db_link),
             'sign_up' => $sign_up,
             'errors' => $errors
         ]);
-    }
 
-} else {
-    $page_content = render_template('templates/sign-up.php', [
-        'categories' => get_categories($db_link),
-        'sign_up' => $sign_up,
-        'errors' => $errors
-    ]);
+    } catch (Exception $error)  {
+        $page_content['error'] = $error->getMessage();
+    }
 }
 
-$layout_content = render_template('templates/layout.php', prepare_data_for_layout($db_link, 'Регистрация', $page_content));
+$layout_content = render_template('templates/layout.php',
+prepare_data_for_layout($db_link, 'Регистрация', $_SESSION, $page_content));
 
 print($layout_content);
