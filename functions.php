@@ -86,7 +86,7 @@ function get_categories($connect) {
         throw new Exception(mysqli_connect_error());
     }
 
-    $sql = 'SELECT * FOM category';
+    $sql = 'SELECT * FROM category';
     $result = mysqli_query($connect, $sql);
 
     if (!$result) {
