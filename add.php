@@ -71,14 +71,19 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
                 ]);
 
             } catch (Exception $error)  {
-                $page_content['error'] = $error->getMessage();
+                $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
             }
 
         } else {
-            $page_content = render_template('templates/lot.php', [
-                'lot' => $lot,
-                'session' => check_authorization($_SESSION)
-            ]);
+            try {
+                $result = add_lot($db_link, $lot, $_SESSION['user']['id']);
+                $lot_id = mysqli_insert_id($db_link);
+                header('Location: /lot.php?id=' . $lot_id);
+                exit();
+
+            } catch (Exception $error)  {
+                $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
+            }
         }
 
     } else {

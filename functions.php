@@ -95,6 +95,19 @@ function get_categories($connect) {
     return $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+function get_category_id($connect, $cat_name) {
+    $categories = get_categories($connect);
+    $id = null;
+
+    foreach ($categories as $category) {
+        if ($category['name'] == $cat_name) {
+            $id = $category['id'];
+        }
+    }
+
+    return $id;
+}
+
 function get_active_lots($connect) {
     if (!$connect) {
         throw new Exception(mysqli_connect_error());
@@ -118,8 +131,9 @@ function get_lot_by_id($connect, $id) {
     if (!$connect) {
         throw new Exception(mysqli_connect_error());
     }
+    $id = intval($id);
 
-    $sql = 'SELECT lot.name, category.name AS category, message, photo, start_price, step, expiration_date FROM lot
+    $sql = 'SELECT lot.id, lot.name, category.name AS category, message, photo, start_price, step, expiration_date FROM lot
     JOIN category ON lot.category_id = category.id
     WHERE lot.id = ' . $id;
 
@@ -145,7 +159,8 @@ function get_bets_by_lot_id($connect, $id) {
     $sql = "SELECT bet.sum, DATE_FORMAT (bet.date, '%d.%m.%y %H:%i') AS date, user.name AS user FROM bet
     JOIN lot ON bet.lot_id = lot.id
     JOIN user ON bet.user_id = user.id
-    WHERE bet.lot_id = " . $id;
+    WHERE bet.lot_id = '$id'
+    ORDER BY bet.date DESC, bet.sum DESC";
 
     $result = mysqli_query($connect, $sql);
 
@@ -157,12 +172,31 @@ function get_bets_by_lot_id($connect, $id) {
 
 }
 
+function get_max_bet_for_lot($connect, $id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "SELECT MAX(sum) AS max_bet FROM bet WHERE lot_id = " . $id;
+
+    $result = mysqli_query($connect, $sql);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    $row = mysqli_fetch_assoc($result);
+    $max = $row['max_bet'];
+
+    return $max;
+}
+
 function get_user_by_login($connect, $login) {
     if (!$connect) {
         throw new Exception(mysqli_connect_error());
     }
 
-    $sql = "SELECT email, password, name, contacts, avatar FROM user
+    $sql = "SELECT * FROM user
     WHERE email = ?";
 
     $input_user = mysqli_real_escape_string($connect, $login);
@@ -212,6 +246,60 @@ function add_user($connect, $userdata, $file_path) {
 
     $user_password = password_hash($userdata['password'], PASSWORD_DEFAULT);
     $stmt = db_get_prepare_stmt($connect, $sql, [$userdata['user_name'], $userdata['email'], $user_password, $userdata['contacts'], $file_path]);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $result;
+}
+
+function add_lot($connect, $lot, $user_id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $category_id = get_category_id($connect, $lot['category']);
+
+    $sql = "INSERT INTO lot (name, category_id, message, photo, start_price, step, expiration_date, author_user_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = db_get_prepare_stmt($connect, $sql, [$lot['name'], $category_id, $lot['message'], $lot['photo'], $lot['start_price'], $lot['step'], $lot['expiration_date'], $user_id]);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $result;
+}
+
+function add_bet($connect, $bet_sum, $lot_id, $user_id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "INSERT INTO bet (sum, lot_id, user_id) VALUES (?, ?, ?)";
+
+    $stmt = db_get_prepare_stmt($connect, $sql, [$bet_sum, $lot_id, $user_id]);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $result;
+}
+
+function update_price($connect, $price, $lot_id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "UPDATE lot SET start_price = ? WHERE id = " . $lot_id;
+
+    $stmt = db_get_prepare_stmt($connect, $sql, [$price]);
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
