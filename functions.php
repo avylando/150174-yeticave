@@ -102,7 +102,8 @@ function get_active_lots($connect) {
 
     $sql = 'SELECT lot.id, creation_date, lot.name, category.name AS category, message, photo, start_price, step, expiration_date
     FROM lot INNER JOIN category ON category.id = lot.category_id
-    WHERE NOW() BETWEEN creation_date AND expiration_date';
+    WHERE NOW() BETWEEN creation_date AND expiration_date
+    ORDER BY creation_date DESC';
 
     $result = mysqli_query($connect, $sql);
 
@@ -141,10 +142,10 @@ function get_bets_by_lot_id($connect, $id) {
         throw new Exception(mysqli_connect_error());
     }
 
-    $sql = 'SELECT bet.sum, user.name AS user, bet.date FROM bet
+    $sql = "SELECT bet.sum, DATE_FORMAT (bet.date, '%d.%m.%y %H:%i') AS date, user.name AS user FROM bet
     JOIN lot ON bet.lot_id = lot.id
     JOIN user ON bet.user_id = user.id
-    WHERE bet.lot_id = ' . $id;
+    WHERE bet.lot_id = " . $id;
 
     $result = mysqli_query($connect, $sql);
 
@@ -153,6 +154,7 @@ function get_bets_by_lot_id($connect, $id) {
     }
 
     return $bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
 }
 
 function get_user_by_login($connect, $login) {
