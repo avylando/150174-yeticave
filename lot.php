@@ -1,18 +1,27 @@
 <?php
 
-require_once 'functions.php';
-require_once 'data.php';
+require_once 'init.php';
 
+$current_id = null;
 $lot = null;
+$bets = [];
 
 if (isset($_GET['id'])) {
-    foreach ($lots as $id => $item) {
-        if ($id === (int) $_GET['id']) {
-            $lot = $item;
-            $current_id = $id;
+    try {
+        $id = intval($_GET['id']);
+        $current_id = $id;
+        $lot = get_lot_by_id($db_link, $id);
 
-            break;
+        if ($lot) {
+            $bets = get_bets_by_lot_id($db_link, $id);
+
+        } else {
+            http_response_code(404);
+            exit();
         }
+
+    } catch (Exception $error) {
+        $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
     }
 }
 
@@ -28,26 +37,15 @@ if (!in_array($current_id, $viewed_ids)) {
     setcookie('history', $updated_history, strtotime('+15 days'));
 }
 
-if (empty($lot)) {
-    http_response_code(404);
-    exit();
+if (!isset($page_content)) {
+    $page_content = render_template('templates/lot.php', [
+        'lot' => $lot,
+        'session' => check_authorization($_SESSION),
+        'bets' => $bets
+    ]);
 }
 
-$page_content = render_template('templates/lot.php', [
-    'lot' => $lot,
-    'session' => [
-        'is_authorized' => $is_authorized
-    ],
-]);
-
-$layout_content = render_template('templates/layout.php', [
-    'title' => 'Просмотр лота',
-    'session' => [
-        'is_authorized' => $is_authorized,
-        'user' => $user
-    ],
-    'categories' => $categories,
-    'content' => $page_content
-]);
+$layout_content = render_template('templates/layout.php',
+prepare_data_for_layout($db_link, 'Просмотр лота', $_SESSION, $page_content));
 
 print($layout_content);

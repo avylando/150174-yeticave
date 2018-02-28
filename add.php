@@ -1,7 +1,6 @@
 <?php
 
-require_once 'functions.php';
-require_once 'data.php';
+require_once 'init.php';
 
 if (!empty($_SESSION) && isset($_SESSION['user'])) {
     $lot = null;
@@ -10,14 +9,14 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add-lot'])) {
         $lot = $_POST;
 
-        $required = ['title', 'category', 'message', 'price', 'step', 'date'];
+        $required = ['name', 'category', 'message', 'start_price', 'step', 'expiration_date'];
         $dict = [
-            'title' => 'наименование лота',
+            'name' => 'наименование лота',
             'category' => 'категорию лота',
             'message' => 'описание лота',
-            'price' => 'начальную цену',
+            'start_price' => 'начальную цену',
             'step' => 'шаг ставки',
-            'date' => 'дату завершения торгов'
+            'expiration_date' => 'дату завершения торгов'
         ];
 
         foreach ($required as $field) {
@@ -30,26 +29,19 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
             }
         }
 
-        if (isset($lot['price']) && (int) $lot['price'] <= 0) {
-            $errors['price'] = 'Значение должно быть больше нуля';
+        if (isset($lot['start_price']) && (int) $lot['start_price'] <= 0) {
+            $errors['start_price'] = 'Значение должно быть больше нуля';
         }
 
         if (isset($lot['step']) && (int) $lot['step'] <= 0) {
             $errors['step'] = 'Значение должно быть больше нуля';
         }
 
-        if (isset($lot['date'])) {
-            if (strtotime($lot['date'])) {
-                $end_date = strtotime($lot['date']);
-                $days_remain = floor(($end_date - time()) / 86400);
+        if (isset($lot['expiration_date'])) {
+            $check_result = check_date($lot['expiration_date']);
 
-                if ($days_remain < 0) {
-                    $errors['date'] = 'Введите корректную дату';
-
-                }
-
-            } else {
-                $errors['date'] = 'Введите дату в формате «ДД.ММ.ГГГГ»';
+            if (!empty($check_result)) {
+                $errors['expiration_date'] = $check_result;
             }
         }
 
@@ -71,24 +63,35 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
         }
 
         if (count($errors)) {
-            $page_content = render_template('templates/add-lot.php', [
-                'categories' => $categories,
-                'lot' => $lot,
-                'errors' => $errors
-            ]);
+            try {
+                $page_content = render_template('templates/add-lot.php', [
+                    'categories' => get_categories($db_link),
+                    'lot' => $lot,
+                    'errors' => $errors
+                ]);
+
+            } catch (Exception $error)  {
+                $page_content['error'] = $error->getMessage();
+            }
 
         } else {
             $page_content = render_template('templates/lot.php', [
-                'lot' => $lot
+                'lot' => $lot,
+                'session' => check_authorization($_SESSION)
             ]);
         }
 
     } else {
-        $page_content = render_template('templates/add-lot.php', [
-            'categories' => $categories,
-            'lot' => $lot,
-            'errors' => $errors
-        ]);
+        try {
+            $page_content = render_template('templates/add-lot.php', [
+                'categories' => get_categories($db_link),
+                'lot' => $lot,
+                'errors' => $errors
+            ]);
+
+        } catch (Exception $error)  {
+            $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
+        }
     }
 
 } else {
@@ -96,14 +99,7 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
     exit();
 }
 
-$layout_content = render_template('templates/layout.php', [
-    'title'      => 'Добавить лот',
-    'session' => [
-        'is_authorized' => $is_authorized,
-        'user' => $user
-    ],
-    'categories' => $categories,
-    'content'    => $page_content,
-]);
+$layout_content = render_template('templates/layout.php',
+prepare_data_for_layout($db_link, 'Добавить лот', $_SESSION, $page_content));
 
 print($layout_content);
