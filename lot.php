@@ -21,7 +21,7 @@ if (isset($_GET['id'])) {
         }
 
     } catch (Exception $error) {
-        $page_content['error'] = $error->getMessage();
+        $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
     }
 }
 

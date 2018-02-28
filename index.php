@@ -9,7 +9,7 @@ try {
     ]);
 
 } catch (Exception $error)  {
-    $page_content['error'] = $error->getMessage();
+    $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
 }
 
 $layout_content = render_template('templates/layout.php',

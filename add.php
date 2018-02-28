@@ -90,7 +90,7 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
             ]);
 
         } catch (Exception $error)  {
-            $page_content['error'] = $error->getMessage();
+            $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
         }
     }
 

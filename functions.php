@@ -6,7 +6,7 @@ function render_template ($template_src, $data) {
     if (file_exists($template_src)) {
         extract($data);
         ob_start();
-        require_once $template_src;
+        include $template_src;
         return ob_get_clean();
     }
 
@@ -82,7 +82,6 @@ function check_authorization($session) {
 
 function get_categories($connect) {
     if (!$connect) {
-        echo '0';
         throw new Exception(mysqli_connect_error());
     }
 
@@ -115,6 +114,9 @@ function get_active_lots($connect) {
 }
 
 function get_lot_by_id($connect, $id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
 
     $sql = 'SELECT lot.name, category.name AS category, message, photo, start_price, step, expiration_date FROM lot
     JOIN category ON lot.category_id = category.id
@@ -129,13 +131,15 @@ function get_lot_by_id($connect, $id) {
     if (!mysqli_num_rows($result)) {
         http_response_code(404);
         return false;
-
-    } else {
-        return $lot = mysqli_fetch_array($result, MYSQLI_ASSOC);
     }
+
+    return $lot = mysqli_fetch_array($result, MYSQLI_ASSOC);
 }
 
 function get_bets_by_lot_id($connect, $id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
 
     $sql = 'SELECT bet.sum, user.name AS user, bet.date FROM bet
     JOIN lot ON bet.lot_id = lot.id
@@ -216,15 +220,6 @@ function add_user($connect, $userdata, $file_path) {
 }
 
 function prepare_data_for_layout($connect, $title, $session, $content) {
-
-    if (isset($content['error'])) {
-        return $data = [
-            'title' => $title,
-            'session' => check_authorization($session),
-            'content' => render_template('templates/error.php', ['error' => $content['error']])
-        ];
-    }
-
     try {
         $categories = get_categories($connect);
 

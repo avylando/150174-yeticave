@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
             }
 
         } catch (Exception $error) {
-            $page_content['error'] = $error->getMessage();
+            $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
         }
     }
 
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
             }
 
         } catch (Exception $error) {
-            $page_content['error'] = $error->getMessage();
+            $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
         }
 
     } else {
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
             ]);
 
         } catch (Exception $error)  {
-            $page_content['error'] = $error->getMessage();
+            $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
         }
     }
 
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
         ]);
 
     } catch (Exception $error)  {
-        $page_content['error'] = $error->getMessage();
+        $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
     }
 }
 
