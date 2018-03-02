@@ -19,11 +19,11 @@ if (isset($_SESSION['user'])) {
                     $max_bet = intval(get_max_bet_for_lot($db_link, $lot_id));
                     $user_id = $_SESSION['user']['id'] ?? '';
 
-                    if ($max_bet == 0) {
-                        $max_bet = $lot['start_price'];
+                    if ($max_bet === 0) {
+                        $max_bet = intval($lot['start_price']);
                     }
 
-                    if ($bet >= ($max_bet + $lot['step'])) {
+                    if ($bet >= ($max_bet + intval($lot['step']))) {
                         mysqli_query($db_link, "START TRANSACTION");
 
                         $result1 = add_bet($db_link, $bet, $lot_id, $user_id);
@@ -31,23 +31,15 @@ if (isset($_SESSION['user'])) {
 
                         if ($result1 && $result2) {
                             mysqli_query($db_link, "COMMIT");
-                        }
-                        else {
+
+                        } else {
                             mysqli_query($db_link, "ROLLBACK");
                         }
-
-                        header("Location: /lot.php?id=" . $lot_id);
-                        exit();
-
-                    } else {
-                        header("Location: /lot.php?id=" . $lot_id);
-                        exit();
                     }
-
-                } else {
-                    header("Location: /lot.php?id=" . $lot_id);
-                    exit();
                 }
+
+                header("Location: /lot.php?id=" . $lot_id);
+                exit();
 
             } catch (Exception $error)  {
                 $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);

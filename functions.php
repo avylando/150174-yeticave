@@ -69,6 +69,20 @@ function check_date($date) {
     return 'Введите дату в формате «ДД.ММ.ГГГГ»';
 }
 
+function check_image_format($file) {
+    $tmp_name = $file['tmp_name'];
+    $path = 'img/' . $file['name'];
+
+    $file_type = mime_content_type($tmp_name);
+
+    if ($file_type !== "image/png" && $file_type !== "image/jpeg") {
+        return false;
+    }
+
+    move_uploaded_file($tmp_name, $path);
+    return $path;
+}
+
 function check_authorization($session) {
     $result = [];
 
@@ -95,25 +109,13 @@ function get_categories($connect) {
     return $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-function get_category_id($connect, $cat_name) {
-    $categories = get_categories($connect);
-    $id = null;
-
-    foreach ($categories as $category) {
-        if ($category['name'] == $cat_name) {
-            $id = $category['id'];
-        }
-    }
-
-    return $id;
-}
-
 function get_active_lots($connect) {
     if (!$connect) {
         throw new Exception(mysqli_connect_error());
     }
 
-    $sql = 'SELECT lot.id, creation_date, lot.name, category.name AS category, message, photo, start_price, step, expiration_date
+    $sql = 'SELECT lot.id, creation_date, lot.name, category.name AS category, message, photo, start_price, step, expiration_date,
+    (SELECT COUNT(*) FROM bet WHERE lot.id = bet.lot_id) AS bets_number
     FROM lot INNER JOIN category ON category.id = lot.category_id
     WHERE NOW() BETWEEN creation_date AND expiration_date
     ORDER BY creation_date DESC';
@@ -260,12 +262,10 @@ function add_lot($connect, $lot, $user_id) {
         throw new Exception(mysqli_connect_error());
     }
 
-    $category_id = get_category_id($connect, $lot['category']);
-
     $sql = "INSERT INTO lot (name, category_id, message, photo, start_price, step, expiration_date, author_user_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $stmt = db_get_prepare_stmt($connect, $sql, [$lot['name'], $category_id, $lot['message'], $lot['photo'], $lot['start_price'], $lot['step'], $lot['expiration_date'], $user_id]);
+    $stmt = db_get_prepare_stmt($connect, $sql, [$lot['name'], $lot['category'], $lot['message'], $lot['photo'], $lot['start_price'], $lot['step'], $lot['expiration_date'], $user_id]);
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
@@ -307,6 +307,45 @@ function update_price($connect, $price, $lot_id) {
     }
 
     return $result;
+}
+
+function count_lots_by_keyword($connect, $keyword) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "SELECT DISTINCT COUNT(*) AS counter FROM lot WHERE MATCH(lot.name, lot.message) AGAINST(?)";
+
+    $stmt = db_get_prepare_stmt($connect, $sql, [$keyword]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $count = mysqli_fetch_assoc($result)['counter'];
+}
+
+function search_lots_by_keyword($connect, $keyword, $limit, $offset) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "SELECT lot.id, lot.name, category.name AS category, lot.message, lot.photo, lot.start_price, lot.step,
+        lot.expiration_date, (SELECT COUNT(*) FROM bet WHERE lot.id = bet.lot_id) AS bets_number
+        FROM lot INNER JOIN category ON lot.category_id = category.id WHERE MATCH(lot.name, lot.message) AGAINST(?)
+        ORDER BY creation_date DESC LIMIT $limit OFFSET ". $offset;
+
+    $stmt = db_get_prepare_stmt($connect, $sql, [$keyword]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
 function prepare_data_for_layout($connect, $title, $session, $content) {

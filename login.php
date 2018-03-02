@@ -40,16 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     }
 
     if (!empty($errors)) {
-        try {
-            $page_content = render_template('templates/login.php', [
-                'categories' => get_categories($db_link),
-                'login' => $login,
-                'errors' => $errors
-            ]);
-
-        } catch (Exception $error)  {
-            $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
-        }
+        $page_content = render_template('templates/login.php', [
+            'login' => $login,
+            'errors' => $errors
+        ]);
     }
 
 } else {
@@ -59,16 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         exit();
     }
 
-    try {
-        $page_content = render_template('templates/login.php', [
-            'categories' => get_categories($db_link),
-            'login' => $login,
-            'errors' => $errors
-        ]);
-
-    } catch (Exception $error)  {
-        $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
-    }
+    $page_content = render_template('templates/login.php', [
+        'login' => $login,
+        'errors' => $errors
+    ]);
 }
 
 $layout_content = render_template('templates/layout.php',

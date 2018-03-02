@@ -1,13 +1,3 @@
-<nav class="nav">
-    <ul class="nav__list container">
-    <?php foreach ($categories as $number => $category) : ?>
-        <li class="nav__item <?= ($number === 0) ? "nav__item--current" : ""?>">
-            <a href="all-lots.html"><?=$category['name']?></a>
-        </li>
-    <?php endforeach; ?>
-    </ul>
-</nav>
-
 <form class="form container <?=(!empty($errors)) ? 'form--invalid' : ''?>" action="../sign-up.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
     <h2>Регистрация нового аккаунта</h2>
     <div class="form__item <?=(isset($errors['email'])) ? 'form__item--invalid' : ''?>"> <!-- form__item--invalid -->

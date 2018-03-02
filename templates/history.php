@@ -1,12 +1,3 @@
-<nav class="nav">
-    <ul class="nav__list container">
-    <?php foreach ($categories as $number => $category) : ?>
-        <li class="nav__item <?= ($number === 0) ? "nav__item--current" : ""?>">
-            <a href="all-lots.html"><?=$category['name']?></a>
-        </li>
-    <?php endforeach; ?>
-    </ul>
-</nav>
 <div class="container">
     <?php if (!empty($related_lots)) : ?>
     <section class="lots">

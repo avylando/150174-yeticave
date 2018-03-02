@@ -19,15 +19,7 @@ if (!empty($_COOKIE) && isset($_COOKIE['history'])) {
     }
 }
 
-try {
-    $page_content = render_template('templates/history.php', [
-        'categories' => get_categories($db_link),
-        'related_lots' => $related_lots
-    ]);
-
-} catch (Exception $error)  {
-    $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
-}
+$page_content = render_template('templates/history.php', ['related_lots' => $related_lots]);
 
 $layout_content = render_template('templates/layout.php',
 prepare_data_for_layout($db_link, 'История просмотров', $_SESSION, $page_content));
