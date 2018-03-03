@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
         'user_name' => 'имя пользователя',
         'contacts' => 'контактные данные'
     ];
+    $avatar_path = 'img/user.jpg';
 
     foreach ($required as $field) {
 
@@ -38,23 +39,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
         }
     }
 
-    $avatar_path = 'img/user.jpg';
     if (is_uploaded_file($_FILES['avatar']['tmp_name']) && empty($errors)) {
-        $tmp_name = $_FILES['avatar']['tmp_name'];
-        $avatar_path = 'img/' . $_FILES['avatar']['name'];
+        $image_path = check_image_format($_FILES['avatar']);
 
-        $file_type = mime_content_type($tmp_name);
-
-        if ($file_type !== "image/png" && $file_type !== "image/jpeg") {
-            $errors['avatar'] = 'Загрузите изображение в поддерживаемом формате (PNG, JPG)';
+        if ($image_path) {
+            $avatar_path = $image_path;
 
         } else {
-            move_uploaded_file($tmp_name, $avatar_path);
+            $errors['avatar'] = 'Загрузите изображение в поддерживаемом формате (PNG, JPG)';
         }
     }
 
     if (empty($errors)) {
-
         try {
             $result = add_user($db_link, $sign_up, $avatar_path);
 
@@ -68,29 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
         }
 
     } else {
-        try {
-            $page_content = render_template('templates/sign-up.php', [
-                'categories' => get_categories($db_link),
-                'sign_up' => $sign_up,
-                'errors' => $errors
-            ]);
-
-        } catch (Exception $error)  {
-            $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
-        }
-    }
-
-} else {
-    try {
         $page_content = render_template('templates/sign-up.php', [
-            'categories' => get_categories($db_link),
             'sign_up' => $sign_up,
             'errors' => $errors
         ]);
-
-    } catch (Exception $error)  {
-        $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
     }
+
+} else {
+    $page_content = render_template('templates/sign-up.php', [
+        'sign_up' => $sign_up,
+        'errors' => $errors
+    ]);
 }
 
 $layout_content = render_template('templates/layout.php',

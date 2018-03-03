@@ -46,18 +46,15 @@ if (!empty($_SESSION) && isset($_SESSION['user'])) {
         }
 
         if (is_uploaded_file($_FILES['photo']['tmp_name']) && empty($errors)) {
-            $tmp_name = $_FILES['photo']['tmp_name'];
-            $path = 'img/' . $_FILES['photo']['name'];
+            $image_path = check_image_format($_FILES['photo']);
 
-            $file_type = mime_content_type($tmp_name);
-
-            if ($file_type !== "image/png" && $file_type !== "image/jpeg") {
-                $errors['photo'] = 'Загрузите изображение в поддерживаемом формате (PNG, JPG)';
+            if ($image_path) {
+                $lot['photo'] = $image_path;
 
             } else {
-                move_uploaded_file($tmp_name, $path);
-                $lot['photo'] = $path;
+                $errors['photo'] = 'Загрузите изображение в поддерживаемом формате (PNG, JPG)';
             }
+
         } else if (!is_uploaded_file($_FILES['photo']['tmp_name'])) {
             $errors['photo'] = 'Загрузите изображение';
         }
