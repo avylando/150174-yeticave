@@ -1,0 +1,16 @@
+{
+    "name": "yeticave/project",
+    "description": "HTML-Academy basic PHP",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Anatoly Dolgov",
+            "email": "anatoldd@list.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "swiftmailer/swiftmailer": "^6.1@dev",
+        "true/punycode": "dev-master"
+    }
+}
