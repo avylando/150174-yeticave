@@ -49,9 +49,9 @@
         <?php if($title !== 'Главная'): ?>
         <nav class="nav">
             <ul class="nav__list container">
-            <?php foreach ($categories as $number => $category) : ?>
-                <li class="nav__item <?= ($number === 0) ? "nav__item--current" : ""?>">
-                    <a href="all-lots.html"><?=$category['name']?></a>
+            <?php foreach ($categories as $category) : ?>
+                <li class="nav__item <?=(isset($current_category) && $current_category == $category['id']) ? "nav__item--current" : ""?>">
+                    <a href="all-lots.php?category_id=<?=$category['id']?>"><?=$category['name']?></a>
                 </li>
             <?php endforeach; ?>
             </ul>
@@ -65,8 +65,8 @@
         <nav class="nav">
             <ul class="nav__list container">
                 <?php foreach ($categories as $category): ?>
-                <li class="nav__item">
-                    <a href="all-lots.html"><?=$category['name']?></a>
+                <li class="nav__item <?=(isset($current_category) && $current_category == $category['id']) ? "nav__item--current" : ""?>">
+                    <a href="all-lots.php?category_id=<?=$category['id']?>"><?=$category['name']?></a>
                 </li>
                 <?php endforeach; ?>
             </ul>

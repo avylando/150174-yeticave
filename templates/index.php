@@ -18,7 +18,7 @@
             break;
         endswitch; ?>
             <li class="promo__item promo__item--<?=$mod?>">
-                <a class="promo__link" href="all-lots.html"><?=$category['name']?></a>
+                <a class="promo__link" href="all-lots.php?category_id=<?=$category['id']?>"><?=$category['name']?></a>
             </li>
     <?php endforeach; ?>
     </ul>

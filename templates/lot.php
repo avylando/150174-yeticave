@@ -10,7 +10,7 @@
         <p class="lot-item__description"><?=htmlspecialchars($lot['message']);?></p>
         </div>
         <div class="lot-item__right">
-        <?php if ($session['is_authorized']): ?>
+        <?php if ($session['is_authorized'] && set_timer($lot['expiration_date']) !== 'Закрыт'): ?>
         <div class="lot-item__state">
             <div class="lot-item__timer timer"><?=set_timer($lot['expiration_date'])?></div>
             <div class="lot-item__cost-state">
