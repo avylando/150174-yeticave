@@ -7,6 +7,7 @@ $lots = [];
 $current_page = null;
 $pages_number = 1;
 $pages = 1;
+
 if (isset($_GET['category_id'])) {
     $category_id = intval($_GET['category_id']);
 
