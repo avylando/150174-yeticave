@@ -154,10 +154,10 @@ function get_active_lots($connect) {
     }
 
     $sql = 'SELECT lot.id, creation_date, lot.name, category.name AS category, message, photo, start_price, step, expiration_date,
-    (SELECT COUNT(*) FROM bet WHERE lot.id = bet.lot_id) AS bets_number
-    FROM lot INNER JOIN category ON category.id = lot.category_id
-    WHERE NOW() BETWEEN creation_date AND expiration_date
-    ORDER BY creation_date DESC';
+        (SELECT COUNT(*) FROM bet WHERE lot.id = bet.lot_id) AS bets_number
+        FROM lot INNER JOIN category ON category.id = lot.category_id
+        WHERE NOW() BETWEEN creation_date AND expiration_date
+        ORDER BY creation_date DESC';
 
     $result = mysqli_query($connect, $sql);
 
@@ -168,22 +168,40 @@ function get_active_lots($connect) {
     return $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* Получение лота по ID
+/* Получение лота по ID (с возможной проверкой существования ставки пользвателя)
  * @param array $connect Ресурс соединения с БД
- * @param integer $id ID лота
+ * @param integer $lot_id ID лота
+ * @param integer $user_id ID пользователя(необязательный параметр)
  * @return array Массив с данными
  */
-function get_lot_by_id($connect, $id) {
+function get_lot_by_id($connect, $lot_id, $user_id = null) {
     if (!$connect) {
         throw new Exception(mysqli_connect_error());
     }
-    $id = intval($id);
 
-    $sql = 'SELECT lot.id, lot.name, category.name AS category, message, photo, start_price, step, expiration_date FROM lot
-    JOIN category ON lot.category_id = category.id
-    WHERE lot.id = ' . $id;
+    if ($user_id) {
+        $sql = "SELECT lot.id, lot.name, category.name AS category, message, photo, start_price, step,
+            expiration_date, author_user_id,
+            EXISTS (SELECT id FROM bet WHERE user_id = ? AND lot_id = ?) AS bet_exists
+            FROM lot
+            INNER JOIN category ON lot.category_id = category.id
+            LEFT JOIN bet ON lot.id = bet.lot_id
+            WHERE lot.id = ?
+            GROUP BY lot.id";
 
-    $result = mysqli_query($connect, $sql);
+        $stmt = db_get_prepare_stmt($connect, $sql, [$user_id, $lot_id, $lot_id]);
+
+    } else {
+        $sql = "SELECT lot.id, lot.name, category.name AS category, message, photo, start_price, step,
+            expiration_date, author_user_id FROM lot
+            INNER JOIN category ON lot.category_id = category.id
+            WHERE lot.id = ?";
+
+        $stmt = db_get_prepare_stmt($connect, $sql, [$lot_id]);
+    }
+
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if (!$result) {
         throw new Exception(mysqli_error($connect));
@@ -210,17 +228,19 @@ function get_bets_by_lot_id($connect, $id) {
     $sql = "SELECT bet.sum, DATE_FORMAT (bet.date, '%d.%m.%y %H:%i') AS date, user.name AS user FROM bet
     JOIN lot ON bet.lot_id = lot.id
     JOIN user ON bet.user_id = user.id
-    WHERE bet.lot_id = '$id'
+    WHERE bet.lot_id = ?
     ORDER BY bet.date DESC, bet.sum DESC";
 
-    $result = mysqli_query($connect, $sql);
+    $stmt = db_get_prepare_stmt($connect, $sql, [$id]);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
 
     if (!$result) {
         throw new Exception(mysqli_error($connect));
     }
 
     return $bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
 }
 
 /* Получение максимальной ставки для лота
@@ -233,9 +253,12 @@ function get_max_bet_for_lot($connect, $id) {
         throw new Exception(mysqli_connect_error());
     }
 
-    $sql = "SELECT MAX(sum) AS max_bet FROM bet WHERE lot_id = " . $id;
+    $sql = "SELECT MAX(sum) AS max_bet FROM bet WHERE lot_id = ?";
 
-    $result = mysqli_query($connect, $sql);
+    $stmt = db_get_prepare_stmt($connect, $sql, [$id]);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
 
     if (!$result) {
         throw new Exception(mysqli_error($connect));

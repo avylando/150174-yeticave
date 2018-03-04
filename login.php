@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     }
 
 } else {
-
     if (!empty($_SESSION) && isset($_SESSION['user'])) {
         header('Location: /index.php');
         exit();
