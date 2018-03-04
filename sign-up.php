@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sign-up'])) {
         }
     }
 
-    if (isset($sign_up['email']) && !filter_var($sign_up['email'], FILTER_VALIDATE_EMAIL)) {
+    if (!empty($sign_up['email']) && !filter_var($sign_up['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Введите валидный E-mail';
 
     } else {
