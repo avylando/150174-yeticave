@@ -2,18 +2,18 @@
 
 require_once 'init.php';
 
-$current_id = null;
+$lot_id = null;
 $lot = null;
 $bets = [];
 
 if (isset($_GET['id'])) {
     try {
-        $id = intval($_GET['id']);
-        $current_id = $id;
-        $lot = get_lot_by_id($db_link, $id);
+        $user_id = intval($_SESSION['user']['id']) ?? 0;
+        $lot_id = intval($_GET['id']);
+        $lot = get_lot_by_id($db_link, $lot_id, $user_id);
 
         if ($lot) {
-            $bets = get_bets_by_lot_id($db_link, $id);
+            $bets = get_bets_by_lot_id($db_link, $lot_id);
 
         } else {
             http_response_code(404);
@@ -31,8 +31,8 @@ if (!empty($_COOKIE) && isset($_COOKIE['history'])) {
     $viewed_ids = json_decode($_COOKIE['history']);
 }
 
-if (!in_array($current_id, $viewed_ids)) {
-    array_push($viewed_ids, $current_id);
+if (!in_array($lot_id, $viewed_ids)) {
+    array_push($viewed_ids, $lot_id);
     $updated_history = json_encode($viewed_ids);
     setcookie('history', $updated_history, strtotime('+15 days'));
 }

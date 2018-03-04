@@ -20,7 +20,6 @@
                     $finished = 'timer--finishing';
                 } else {
                     $finished = '';
-                    $value = set_timer($bet['expiration_date']);
                 }
 
                 if ($bet['winner'] === $user_id) {

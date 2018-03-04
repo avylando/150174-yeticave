@@ -10,7 +10,7 @@
         <p class="lot-item__description"><?=htmlspecialchars($lot['message']);?></p>
         </div>
         <div class="lot-item__right">
-        <?php if ($session['is_authorized'] && set_timer($lot['expiration_date']) !== 'Закрыт'): ?>
+        <?php if ($session['is_authorized'] && set_timer($lot['expiration_date']) !== 'Закрыт' && $session['user']['id'] !== intval($lot['author_user_id']) && !$lot['bet_exists']): ?>
         <div class="lot-item__state">
             <div class="lot-item__timer timer"><?=set_timer($lot['expiration_date'])?></div>
             <div class="lot-item__cost-state">
@@ -19,7 +19,7 @@
                 <span class="lot-item__cost"><?=format_price(htmlspecialchars($lot['start_price']))?><b class="rub">р</b></span>
             </div>
             <div class="lot-item__min-cost">
-                Мин. ставка <span><?=htmlspecialchars($lot['step'])?> р</span>
+                Мин. ставка <span><?=htmlspecialchars(intval($lot['start_price']) + intval($lot['step']))?> р</span>
             </div>
             </div>
             <form class="lot-item__form" action="bet.php?lot_id=<?=$lot['id']?>" method="post">
