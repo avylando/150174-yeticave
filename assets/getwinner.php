@@ -13,7 +13,7 @@ if (!empty($win_data)) {
 
             $transport = (new Swift_SmtpTransport('smtp.mail.ru', 465, 'ssl'))
                 ->setUsername('roadtoawe@mail.ru')
-                ->setPassword('supermassive74');
+                ->setPassword('');
 
             $mailer = new Swift_Mailer($transport);
 
