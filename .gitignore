@@ -1,6 +1,5 @@
 .DS_Store
 .idea
-assets/
 *.ai
 *.log
 *.pdf
