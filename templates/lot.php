@@ -22,7 +22,7 @@
                 Мин. ставка <span><?=htmlspecialchars(intval($lot['start_price']) + intval($lot['step']))?> р</span>
             </div>
             </div>
-            <form class="lot-item__form" action="bet.php?lot_id=<?=$lot['id']?>" method="post">
+            <form class="lot-item__form" action="assets/bet.php?lot_id=<?=$lot['id']?>" method="post">
             <p class="lot-item__form-item">
                 <label for="cost">Ваша ставка</label>
                 <input id="cost" type="number" name="cost" placeholder="12 000">

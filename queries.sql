@@ -10,16 +10,16 @@ VALUES ('Игнат', 'ignat.v@gmail.com', '$2y$10$OqvsKHQwr0Wk6FMZDoHo1uHoXd4Ud
 
 -- Добавление лотов
 INSERT INTO lot (name, category_id, message, photo, start_price, step, expiration_date, author_user_id)
-VALUES ('2014 Rossignol District Snowboard', 1, 'Борд', 'img/lot-1.jpg', 10999, 100, '2018-03-10 00:00:00', 1),
-('DC Ply Mens 2016/2017 Snowboard', 1, 'Snowboard', 'img/lot-2.jpg', 159999, 10000, '2018-03-09 00:00:00', 2),
+VALUES ('2014 Rossignol District Snowboard', 1, 'Борд', 'img/lot-1.jpg', 12299, 100, '2018-03-21 00:00:00', 1),
+('DC Ply Mens 2016/2017 Snowboard', 1, 'Snowboard', 'img/lot-2.jpg', 159999, 10000, '2018-03-30 00:00:00', 2),
 ('Крепления Union Contact Pro 2015 года размер L/XL', 2, 'Почти новые крепления', 'img/lot-3.jpg', 8000, 500, '2018-03-23 00:00:00', 2),
 ('Ботинки для сноуборда DC Mutiny Charocal', 3, 'Клевые ботинки', 'img/lot-4.jpg', 10999, 500, '2018-05-09 00:00:00', 3),
-('Куртка для сноуборда DC Mutiny Charocal', 4, 'Модная куртка', 'img/lot-5.jpg', 7500, 200, '2018-03-09 00:00:00', 1),
+('Куртка для сноуборда DC Mutiny Charocal', 4, 'Модная куртка', 'img/lot-5.jpg', 7500, 200, '2018-03-11 00:00:00', 1),
 ('Маска Oakley Canopy', 5, 'Подходит для любого времени суток', 'img/lot-6.jpg', 5400, 100, '2018-04-21 00:00:00', 3);
 
 -- Добавление ставок
 INSERT INTO bet (sum, lot_id, user_id)
-VALUES (11499, 1, 2), (12099, 1, 3), (12299, 1, 2), (12599, 1, 3);
+VALUES (11499, 1, 2), (12099, 1, 3), (8500, 3, 1);
 
 -- Получение категорий
 SELECT * FROM category;
