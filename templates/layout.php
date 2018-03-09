@@ -27,7 +27,9 @@
                     <img src="<?=$session['user']['avatar']?>" width="40" height="40" alt="Пользователь">
                 </div>
                 <div class="user-menu__logged">
-                    <p><?=$session['user']['name']; ?></p>
+                    <a href='my-lots.php?user_id=<?=$session['user']['id']?>'>
+                        <p><?=$session['user']['name']; ?></p>
+                    </a>
                     <a href="../assets/logout.php">Выход</a>
                 </div>
             <?php else: ?>
@@ -48,7 +50,7 @@
     <main class="container">
         <?php if($title !== 'Главная'): ?>
         <nav class="nav">
-            <ul class="nav__list container">
+            <ul class="nav__list">
             <?php foreach ($categories as $category) : ?>
                 <li class="nav__item <?=(isset($current_category) && $current_category == $category['id']) ? "nav__item--current" : ""?>">
                     <a href="all-lots.php?category_id=<?=$category['id']?>"><?=$category['name']?></a>
@@ -75,7 +77,8 @@
         <div class="main-footer__bottom container">
             <div class="main-footer__copyright">
                 <p>© 2018, YetiCave</p>
-                <p>Интернет-аукцион сноубордического и горнолыжного снаряжения</p>
+                <p>Интернет-аукцион сноубордического и горнолыжного снаряжения<sup>*</sup></p>
+                <small><sup>*</sup>Сайт является учебным проектом HTML-Academy и создан в демонстрационных целях. </small>
             </div>
             <div class="main-footer__social social">
                 <span class="visually-hidden">Мы в соцсетях:</span>
@@ -109,5 +112,6 @@
         </div>
     </footer>
 
+    <script src="js/upload-pictures.js"></script>
 </body>
 </html>

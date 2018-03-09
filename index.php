@@ -1,7 +1,7 @@
 <?php
 
 require_once 'init.php';
-require_once 'getwinner.php';
+require_once 'assets/getwinner.php';
 
 try {
     $page_content = render_template('templates/index.php', [

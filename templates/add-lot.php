@@ -24,11 +24,12 @@
     </div>
     <div class="form__item form__item--file <?=isset($errors['photo']) ? "form__item--invalid" : "";?>">
         <label>Изображение</label>
-        <div class="preview">
-        <button class="preview__remove" type="button">x</button>
-        <div class="preview__img">
-            <img src="<?=isset($lot['photo']) ? $lot['photo'] : "img/avatar.jpg";?>" width="113" height="113" alt="Изображение лота">
-        </div>
+        <div class="preview photo__container">
+            <button class="preview__remove" type="button">x</button>
+            <progress class='preview__progress'></progress>
+            <div class="preview__img">
+                <img src="" width="113" height="113" alt="Изображение лота">
+            </div>
         </div>
         <div class="form__input-file">
         <input class="visually-hidden" name="photo" type="file" id="photo2" value="">

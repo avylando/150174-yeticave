@@ -4,6 +4,11 @@ require_once 'init.php';
 
 if (empty($_SESSION['user'])) {
     http_response_code(403);
+    $page_content = render_template('templates/error.php', [
+        'error' => 'Только для зарегистрированных пользователей. Пожалуйста, авторизуйтесь, чтобы продолжить']);
+    $layout_content = render_template('templates/layout.php',
+    prepare_data_for_layout($db_link, 'Недостаточно прав', $_SESSION, $page_content));
+    print($layout_content);
     exit();
 }
 

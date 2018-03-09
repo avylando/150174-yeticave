@@ -19,7 +19,7 @@ if (isset($_GET['user_id'])) {
 }
 
 if (!isset($page_content)) {
-    $page_content = render_template('templates/my-lots.php', ['user_id' => $user_id, 'bets' => $bets]);
+    $page_content = render_template('templates/my-lots.php', ['session' => $_SESSION, 'user_id' => $user_id, 'bets' => $bets]);
 }
 
 $layout_content = render_template('templates/layout.php',

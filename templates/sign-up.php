@@ -22,17 +22,18 @@
     </div>
     <div class="form__item form__item--file form__item--last <?=isset($errors['avatar']) ? 'form__item--invalid' : ''?>">
         <label>Аватар</label>
-        <div class="preview">
-        <button class="preview__remove" type="button">x</button>
-        <div class="preview__img">
-            <img src="img/avatar.jpg" width="113" height="113" alt="Ваш аватар">
-        </div>
+        <div class="preview photo__container">
+            <button class="preview__remove" type="button">x</button>
+            <progress class='preview__progress'></progress>
+            <div class="preview__img">
+                <img src="" width="113" height="113" alt="Ваш аватар">
+            </div>
         </div>
         <div class="form__input-file">
-        <input class="visually-hidden" type="file" name="avatar" id="photo2" value="">
-        <label for="photo2">
-            <span>+ Добавить</span>
-        </label>
+            <input class="visually-hidden" type="file" name="avatar" id="photo2" value="">
+            <label for="photo2">
+                <span>+ Добавить</span>
+            </label>
         </div>
         <span class="form__error"><?=$errors['avatar']?></span>
     </div>
