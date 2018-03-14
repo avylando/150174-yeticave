@@ -177,7 +177,7 @@ function get_active_lots($connect) {
     return $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* Получение лота по ID (с возможной проверкой существования ставки пользвателя)
+/** Получение лота по ID (с возможной проверкой существования ставки пользвателя)
  * @param array $connect Ресурс соединения с БД
  * @param integer $lot_id ID лота
  * @param integer $user_id ID пользователя(необязательный параметр)
@@ -224,7 +224,35 @@ function get_lot_by_id($connect, $lot_id, $user_id = null) {
     return $lot = mysqli_fetch_array($result, MYSQLI_ASSOC);
 }
 
-/* Получение ставок для лота
+/** Получение массива с лотами по массиву с ID
+ * @param array $connect Ресурс соединения с БД
+ * @param array $array Массив с ID
+ * @return array Массив с данными
+ */
+function get_lots_by_ids($connect, $array) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $ids = implode(', ', $array);
+    $reverse_ids = implode(', ', array_reverse($array));
+
+    $sql = "SELECT lot.id, creation_date, lot.name, category.name AS category, message, photo, start_price, step, expiration_date,
+        (SELECT COUNT(*) FROM bet WHERE lot.id = bet.lot_id) AS bets_number
+        FROM lot INNER JOIN category ON category.id = lot.category_id
+        WHERE lot.id IN (" .$ids. ")
+        ORDER BY FIELD (lot.id, " .$reverse_ids. ")";
+
+    $result = mysqli_query($connect, $sql);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/** Получение ставок для лота
  * @param array $connect Ресурс соединения с БД
  * @param integer $id ID лота
  * @return array Массив с данными
@@ -252,7 +280,7 @@ function get_bets_by_lot_id($connect, $id) {
     return $bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* Получение максимальной ставки для лота
+/** Получение максимальной ставки для лота
  * @param array $connect Ресурс соединения с БД
  * @param integer $id ID лота
  * @return integer Значение ставки
@@ -279,7 +307,7 @@ function get_max_bet_for_lot($connect, $id) {
     return $max;
 }
 
-/* Получение пользователя по Email
+/** Получение пользователя по Email
  * @param array $connect Ресурс соединения с БД
  * @param string $login Email пользователя
  * @return array Массив с данными
@@ -305,7 +333,7 @@ function get_user_by_login($connect, $login) {
     return $current_user = mysqli_fetch_assoc($result);
 }
 
-/* Поиск Email
+/** Поиск Email
  * @param array $connect Ресурс соединения с БД
  * @param string $email Email пользователя
  * @return string Строку с ошибкой/null
@@ -334,7 +362,7 @@ function search_email_in_db($connect, $email) {
     return null;
 }
 
-/* Добавление пользователя
+/** Добавление пользователя
  * @param array $connect Ресурс соединения с БД
  * @param array $userdata Данные пользователя
  * @param string $file_path Путь к файлу аватара
@@ -359,7 +387,7 @@ function add_user($connect, $userdata, $file_path) {
     return $result;
 }
 
-/* Добавление лота
+/** Добавление лота
  * @param array $connect Ресурс соединения с БД
  * @param array $lot Данные лота
  * @param integer $user_id ID пользователя
@@ -383,7 +411,7 @@ function add_lot($connect, $lot, $user_id) {
     return $result;
 }
 
-/* Добавление ставки
+/** Добавление ставки
  * @param array $connect Ресурс соединения с БД
  * @param integer $bet_sum Сумма ставки
  * @param integer $lot_id ID лота
@@ -407,7 +435,7 @@ function add_bet($connect, $bet_sum, $lot_id, $user_id) {
     return $result;
 }
 
-/* Обновление цены лота
+/** Обновление цены лота
  * @param array $connect Ресурс соединения с БД
  * @param integer $price Значение цены
  * @param integer $lot_id ID лота
@@ -430,7 +458,7 @@ function update_price($connect, $price, $lot_id) {
     return $result;
 }
 
-/* Подсчет количества совпадающих записей по ключевому слову
+/** Подсчет количества совпадающих записей по ключевому слову
  * @param array $connect Ресурс соединения с БД
  * @param string $keyword Ключевое слово для поиска
  * @return boolean Результат запроса
@@ -453,7 +481,7 @@ function count_lots_by_keyword($connect, $keyword) {
     return $count = mysqli_fetch_assoc($result)['counter'];
 }
 
-/* Поиск лотов по ключевому слову
+/** Поиск лотов по ключевому слову
  * @param array $connect Ресурс соединения с БД
  * @param string $keyword Ключевое слово для поиска
  * @param integer $limit Лимит поиска
@@ -481,7 +509,7 @@ function search_lots_by_keyword($connect, $keyword, $limit, $offset) {
     return $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* Подсчет количества совпадающих записей по id категории
+/** Подсчет количества совпадающих записей по id категории
  * @param array $connect Ресурс соединения с БД
  * @param integer $category_id ID категории
  * @return boolean Результат запроса
@@ -505,7 +533,7 @@ function count_lots_by_category($connect, $category_id) {
     return $count = mysqli_fetch_assoc($result)['counter'];
 }
 
-/* Поиск лотов по ID категории
+/** Поиск лотов по ID категории
  * @param array $connect Ресурс соединения с БД
  * @param integer $category_id ID категории
  * @param integer $limit Лимит поиска
@@ -518,9 +546,9 @@ function search_lots_by_category($connect, $category_id, $limit, $offset) {
     }
 
     $sql = "SELECT lot.id, lot.name, category.name AS category, lot.message, lot.photo, lot.start_price, lot.step,
-        lot.expiration_date, (SELECT COUNT(*) FROM bet WHERE lot.id = bet.lot_id) AS bets_number
-        FROM lot INNER JOIN category ON lot.category_id = category.id WHERE category_id = ?
-        ORDER BY creation_date DESC LIMIT $limit OFFSET ". $offset;
+            lot.expiration_date, (SELECT COUNT(*) FROM bet WHERE lot.id = bet.lot_id) AS bets_number
+            FROM lot INNER JOIN category ON lot.category_id = category.id WHERE category_id = ?
+            ORDER BY expiration_date DESC LIMIT $limit OFFSET ". $offset;
 
     $stmt = db_get_prepare_stmt($connect, $sql, [$category_id]);
     mysqli_stmt_execute($stmt);
@@ -533,7 +561,7 @@ function search_lots_by_category($connect, $category_id, $limit, $offset) {
     return $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* Поиск ставок пользователя
+/** Поиск ставок пользователя
  * @param array $connect Ресурс соединения с БД
  * @param integer $user_id ID пользователя
  * @return array Массив данных
@@ -543,14 +571,14 @@ function search_bets_by_user($connect, $user_id) {
         throw new Exception(mysqli_connect_error());
     }
 
-    $sql = "SELECT lot.id AS lot_id, lot.name AS lot_name, lot.photo AS lot_photo, lot.start_price AS lot_price,
-        lot.expiration_date, lot.winner_user_id AS winner, user.contacts AS owner_contacts, bet.sum, bet.date
-        FROM bet
-        INNER JOIN lot ON lot.id = bet.lot_id
-        INNER JOIN category ON lot.category_id = category.id
-        INNER JOIN user ON lot.author_user_id = user.id
-        WHERE user_id = ?
-        ORDER BY creation_date DESC";
+    $sql = "SELECT lot.id AS lot_id, lot.name AS lot_name, category.name AS lot_category, lot.photo AS lot_photo, lot.start_price AS lot_price,
+            lot.expiration_date, lot.winner_user_id AS winner, user.contacts AS owner_contacts, bet.sum, bet.date
+            FROM bet
+            INNER JOIN lot ON lot.id = bet.lot_id
+            INNER JOIN category ON lot.category_id = category.id
+            INNER JOIN user ON lot.author_user_id = user.id
+            WHERE user_id = ?
+            ORDER BY creation_date DESC";
 
     $stmt = db_get_prepare_stmt($connect, $sql, [$user_id]);
     mysqli_stmt_execute($stmt);
@@ -563,7 +591,7 @@ function search_bets_by_user($connect, $user_id) {
     return $bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* Определение победителей для истекших лотов
+/** Определение победителей для истекших лотов
  * @param array $connect Ресурс соединения с БД
  * @return array Массив данных
  */
@@ -593,9 +621,9 @@ function get_winners($connect) {
     return $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* Добавление ID победителей в таблицу лотов
+/** Добавление ID победителей в таблицу лотов
  * @param array $connect Ресурс соединения с БД
- * @param data $user_id Массив данных
+ * @param array $data Массив данных
  * @return boolean Результат запроса
  */
 function update_winners($connect, $data) {
@@ -603,22 +631,26 @@ function update_winners($connect, $data) {
         throw new Exception(mysqli_connect_error());
     }
 
-    foreach ($data as $index => $item) {
-        $sql = "UPDATE lot SET winner_user_id = " . $item['user_id'] . " WHERE id = " . $item['lot_id'];
-        $result = mysqli_query($connect, $sql);
-
-        if (!$result) {
-            throw new Exception(mysqli_error($connect));
-        }
+    $strings = [];
+    foreach ($data as $item) {
+        array_push($strings, "(" .$item['lot_id'] . ", '', 0, '', '', 0, 0, '2000-01-01 00:00:00', 0, " . $item['user_id'] . ")");
     }
 
+    $sql = "INSERT INTO lot (id, name, category_id, message, photo, start_price, step, expiration_date, author_user_id, winner_user_id)
+            VALUES " .implode(', ', $strings). "
+            ON DUPLICATE KEY UPDATE
+            winner_user_id = VALUES(winner_user_id)";
 
+    $result = mysqli_query($connect, $sql);
 
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
 
     return $result;
 }
 
-/* Подготовка данных для рендеринга базового шаблона
+/** Подготовка данных для рендеринга базового шаблона
  * @param array $connect Ресурс соединения с БД
  * @param string $title Заголовок страницы
  * @param array $session Сессия

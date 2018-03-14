@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
 
         } else {
             http_response_code(404);
-            exit();
+            $page_content = render_template('templates/error.php', ['error' => 'Лот не найден']);
         }
 
     } catch (Exception $error) {
@@ -34,7 +34,7 @@ if (!empty($_COOKIE) && isset($_COOKIE['history'])) {
 if (!in_array($lot_id, $viewed_ids)) {
     array_push($viewed_ids, $lot_id);
     $updated_history = json_encode($viewed_ids);
-    setcookie('history', $updated_history, strtotime('+15 days'));
+    setcookie('history', $updated_history, strtotime('+5 days'));
 }
 
 if (!isset($page_content)) {

@@ -1150,8 +1150,19 @@ input:invalid .form__error{
   padding-top: 50px;
 }
 
-.rates h2 {
+.rates__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-bottom: 24px;
+}
+
+.rates h2 {
+  width: 200px;
+}
+
+.rates h3 {
+  width: 200px;
 }
 
 .rates__list {
@@ -1202,7 +1213,7 @@ input:invalid .form__error{
 .rates__img {
   width: 54px;
   height: 40px;
-  margin-right: 8px;
+  margin-right: 15px;
 }
 
 .rates__img img {
@@ -1210,10 +1221,15 @@ input:invalid .form__error{
   height: 100%;
 }
 
+.rates__descr {
+  width: 350px;
+}
+
 .rates__title {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .rates__title a {
